@@ -1,0 +1,61 @@
+import React from "react";
+
+function SelectField(props) {
+  const {
+    type,
+    label,
+    field,
+    form,
+    options,
+    className,
+    placeholder,
+    variant,
+    ref,
+    required,
+    ...otherProps
+  } = props;
+  const { onChange, onBlur, value, name } = field || {};
+  const { errors, touched } = form || {};
+
+  let items = "";
+  items = options?.map((item, index) => {
+    return (
+      <option key={index} value={item.value} label={item.name}>
+        {item.name}
+      </option>
+    );
+  });
+
+  //! Render
+  return (
+    <div style={{ height: "95px" }}>
+      {!!label && (
+        <label className="d-flex mb-2" htmlFor={name}>
+          {label}
+          {required && <span style={{ color: "red" }}>*</span>}:
+        </label>
+      )}
+      <select
+        name={name}
+        className={className}
+        value={value}
+        onChange={onChange}
+        onBlur={onBlur}
+        style={{ display: "block" }}
+        {...otherProps}
+      >
+        <option value="">
+          ------------------------Choose Category------------------------
+        </option>
+        {items}
+      </select>
+      {errors[field.name] && touched[field.name] ? (
+        <div style={{ color: "red", margin: "0", fontSize: "13px" }}>
+          {errors[field.name]}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+export default SelectField;

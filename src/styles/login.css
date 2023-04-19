@@ -1,0 +1,65 @@
+.auth__form{
+    background: var(--primary-color);
+    padding: 40px;
+    border-radius: 5px;
+}
+
+.auth__btn{
+    background: #fff;
+    color: var(--primary-color);
+    font-weight: 600;
+    border: none;
+    outline: none;
+    padding: 8px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    margin-top: 40px;
+}
+
+.auth__btn:hover{
+    background: #ffffffd0 ;
+}
+
+.auth__btn a{
+    color: var(--primary-color);
+}
+
+.auth__form p {
+    margin-top: 30px;
+}
+
+.auth__form p a{
+    color: rgba(255, 255, 255, 0.637);
+}
+
+input[type='file'] {
+    color: #fff;
+    cursor: pointer;
+}
+
+.login__input input,.password__input input{
+    border: none;
+}
+
+.login__input,.password__input{
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #fff;
+    border-radius: 6px;
+    padding-left: 2px;
+}
+
+.login__input span,.password__input span{
+    color: black;
+    padding-right: 4px;
+    font-size: 25px;
+    border-right: 1px solid black;
+}
+
+.show__password{
+    padding-right: 7px;
+    cursor: pointer;
+}
+
