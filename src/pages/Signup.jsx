@@ -1,28 +1,29 @@
 import React from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Col, Container, Form, FormGroup, Row } from "reactstrap";
-import Helmet from "../components/Helmet/Helmet";
 import "../styles/login.css";
+import { Col, Container, FormGroup, Row } from "reactstrap";
+import Helmet from "../components/Helmet/Helmet";
+
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { setDoc, doc } from "firebase/firestore";
 import { auth, storage, db } from "../firebase.config";
+
+import { Formik, Field, Form } from "formik";
+import * as Yup from "yup";
 import { toast } from "react-toastify";
+import InputField from "../components/Field/InputField";
 
 const Signup = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  console.log(file);
+  const signup = async (values) => {
+    const { username, email, password } = values;
 
-  const signup = async (e) => {
-    e.preventDefault();
     setLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -65,6 +66,24 @@ const Signup = () => {
     }
   };
 
+  const initialValues = {
+    username: "",
+    email: "",
+    password: "",
+    imageFormik: "",
+  };
+
+  const validationSchema = Yup.object().shape({
+    username: Yup.string().required("Trường này là bắt buộc"),
+    email: Yup.string()
+      .email("Vui lòng nhập đúng dạng email")
+      .required("Trường này là bắt buộc"),
+    password: Yup.string()
+      .min(6, "Mật khẩu phải có ít nhất 6 kí tự")
+      .required("Trường này là bắt buộc"),
+    imageFormik: Yup.string().required("Trường này là bắt buộc"),
+  });
+
   return (
     <Helmet title="Signup">
       <section>
@@ -75,53 +94,87 @@ const Signup = () => {
                 <h6 className="fw-bold">Loading....</h6>
               </Col>
             ) : (
-              <Col lg="6" className="m-auto text-center">
-                <h3 className="fw-bold fs-4 mb-4">Signup</h3>
+              <Col lg="6" className="m-auto ">
+                <h3 className="fw-bold fs-4 mb-4 text-center">
+                  Đăng kí tài khoản
+                </h3>
 
-                <Form className="auth__form" onSubmit={signup}>
-                  <FormGroup className="form__group">
-                    <input
-                      type="text"
-                      placeholder="Username"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                    />
-                  </FormGroup>
-                  <FormGroup className="form__group">
-                    <input
-                      type="email"
-                      placeholder="Enter your email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </FormGroup>
-                  <FormGroup className="form__group">
-                    <input
-                      type="password"
-                      placeholder="Enter your password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                  </FormGroup>
-                  <FormGroup className="form__group">
-                    <input
-                      type="file"
-                      onChange={(e) => {
-                        console.log(e);
-                        return setFile(e.target.files[0]);
-                      }}
-                    />
-                  </FormGroup>
-                  <button type="submit" className="buy__btn auth__btn">
-                    Create an Account
-                  </button>
-                  <p>
-                    Already have an account?
-                    <u>
-                      <Link to="/login">Login</Link>
-                    </u>
-                  </p>
-                </Form>
+                <Formik
+                  initialValues={initialValues}
+                  validationSchema={validationSchema}
+                  onSubmit={signup}
+                >
+                  {(props) => {
+                    return (
+                      <Form className="auth__form">
+                        <FormGroup className="form__group">
+                          <Field
+                            name="username"
+                            component={InputField}
+                            label="Tên người dùng"
+                            labelStyle="white"
+                            placeholder="Nhập tên người dùng"
+                            required
+                          />
+                        </FormGroup>
+                        <FormGroup className="form__group">
+                          <Field
+                            name="email"
+                            component={InputField}
+                            label="Email"
+                            labelStyle="white"
+                            placeholder="Nhập email"
+                            required
+                          />
+                        </FormGroup>
+                        <FormGroup className="form__group">
+                          <Field
+                            name="password"
+                            component={InputField}
+                            label="Mật khẩu"
+                            labelStyle="white"
+                            placeholder="Nhập mật khẩu"
+                            required
+                          />
+                        </FormGroup>
+
+                        <FormGroup className="form__group">
+                          <Field
+                            name="imageFormik"
+                            type="file"
+                            onChange={(e) => {
+                              props.setFieldValue(
+                                "imageFormik",
+                                e.currentTarget.value
+                              );
+                              setFile(e.target.files[0]);
+                            }}
+                            component={InputField}
+                            style={{
+                              color: "#0a1d37",
+                              backgroundColor: "#fff",
+                            }}
+                            label="Avatar"
+                            labelStyle="white"
+                            required
+                          />
+                        </FormGroup>
+
+                        <div className="text-center">
+                          <button className="buy__btn auth__btn" type="submit">
+                            Đăng kí tài khoản
+                          </button>
+                          <p>
+                            Đã có tài khoản
+                            <u>
+                              <Link to="/login">Đăng nhập ngay</Link>
+                            </u>
+                          </p>
+                        </div>
+                      </Form>
+                    );
+                  }}
+                </Formik>
               </Col>
             )}
           </Row>

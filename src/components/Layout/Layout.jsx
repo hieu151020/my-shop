@@ -10,12 +10,27 @@ const Layout = () => {
 
   return (
     <>
-      {location.pathname.startsWith("/dashboard") ? <AdminNav /> : <Header />}
+      {location.pathname.startsWith("/dashboard") ? (
+        <>
+          <AdminNav />
+          <div>
+            <Routers />
+          </div>
+        </>
+      ) : (
+        <>
+          <Header />
+          <div>
+            <Routers />
+          </div>
+          <Footer />
+        </>
+      )}
       {/* <Header /> */}
-      <div>
+      {/* <div>
         <Routers />
       </div>
-      <Footer />
+      <Footer /> */}
     </>
   );
 };

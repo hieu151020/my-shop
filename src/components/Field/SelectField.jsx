@@ -9,13 +9,15 @@ function SelectField(props) {
     options,
     className,
     placeholder,
-    variant,
     ref,
     required,
     ...otherProps
   } = props;
   const { onChange, onBlur, value, name } = field || {};
   const { errors, touched } = form || {};
+
+  const errMessage = errors[field.name];
+  const isShowErrMessage = errors[field.name] && touched[field.name];
 
   let items = "";
   items = options?.map((item, index) => {
@@ -32,7 +34,10 @@ function SelectField(props) {
       {!!label && (
         <label className="d-flex mb-2" htmlFor={name}>
           {label}
-          {required && <span style={{ color: "red" }}>*</span>}:
+          {required && (
+            <span style={{ color: "red", fontWeight: "inherit" }}>(*)</span>
+          )}
+          :
         </label>
       )}
       <select
@@ -49,9 +54,9 @@ function SelectField(props) {
         </option>
         {items}
       </select>
-      {errors[field.name] && touched[field.name] ? (
+      {isShowErrMessage ? (
         <div style={{ color: "red", margin: "0", fontSize: "13px" }}>
-          {errors[field.name]}
+          {errMessage}
         </div>
       ) : null}
     </div>

@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import "./header.css";
 import { motion } from "framer-motion";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Container, Row } from "reactstrap";
 import { useSelector } from "react-redux";
 
@@ -15,15 +15,15 @@ import { toast } from "react-toastify";
 const nav_links = [
   {
     path: "home",
-    display: "Home",
+    display: "Trang chủ",
   },
   {
     path: "shop",
-    display: "Shop",
+    display: "Sản phẩm",
   },
   {
     path: "cart",
-    display: "Cart",
+    display: "Giỏ hàng",
   },
 ];
 const Header = () => {
@@ -33,13 +33,8 @@ const Header = () => {
 
   const menuRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const { currentUser } = useAuth();
-  // const isAdmin = useSelector((state) => state.user.isAdmin);
-
-  // const deleteProduct = () => {
-  //   dispatch(cartActions.deleteItem(item.id));
-  // };
-  // console.log(isAdmin);
 
   const isAdmin = currentUser?.displayName === "admin";
 
@@ -60,7 +55,6 @@ const Header = () => {
     signOut(auth)
       .then(() => {
         toast.success("You are log out");
-        // navigate("/home");
       })
       .catch((err) => {
         toast.error(err.message);
@@ -92,7 +86,7 @@ const Header = () => {
             <div className="logo">
               <img src={logo} alt="logo" />
               <div>
-                {nav_links.path === "home" ? (
+                {location.pathname === "/home" ? (
                   <h1>My Shop</h1>
                 ) : (
                   <Link to={"/"}>
@@ -149,7 +143,7 @@ const Header = () => {
                     <>
                       {!!isAdmin ? (
                         <div className="d-flex align-items-center justify-content-center flex-column">
-                          <span onClick={logout}>Logout</span>
+                          <span onClick={logout}>Đăng xuất</span>
                           <Link to="/dashboard">
                             <span onClick={toggleProfileActions}>
                               Dashboard
@@ -157,16 +151,16 @@ const Header = () => {
                           </Link>
                         </div>
                       ) : (
-                        <span onClick={logout}>Logout</span>
+                        <span onClick={logout}>Đăng xuất</span>
                       )}
                     </>
                   ) : (
                     <div className="d-flex align-items-center justify-content-center flex-column">
                       <Link to="/signup">
-                        <span onClick={toggleProfileActions}>Signup</span>
+                        <span onClick={toggleProfileActions}>Đăng kí</span>
                       </Link>
                       <Link to="/login">
-                        <span onClick={toggleProfileActions}>Login</span>
+                        <span onClick={toggleProfileActions}>Đăng nhập</span>
                       </Link>
                     </div>
                   )}

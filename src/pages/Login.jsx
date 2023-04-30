@@ -34,7 +34,20 @@ const Login = () => {
       navigate("/checkout");
     } catch (error) {
       setLoading(false);
-      toast.error(error.message);
+      console.log(error.message);
+      switch (error.message) {
+        case "Firebase: Error (auth/invalid-email).":
+          toast.error("Email không hợp lệ ");
+          break;
+        case "Firebase: Error (auth/user-not-found).":
+          toast.error("Email không tồn tại");
+          break;
+        case "Firebase: Error (auth/wrong-password).":
+          toast.error("Sai mật khẩu ");
+          break;
+        default:
+          console.log("Lỗi");
+      }
     }
   };
 
@@ -55,7 +68,7 @@ const Login = () => {
               </Col>
             ) : (
               <Col lg="6" className="m-auto text-center">
-                <h3 className="fw-bold fs-4 mb-4">Login</h3>
+                <h3 className="fw-bold fs-4 mb-4">Đăng nhập</h3>
 
                 <Form className="auth__form" onSubmit={signIn}>
                   <FormGroup className="form__group">
@@ -64,7 +77,7 @@ const Login = () => {
                         <i className="ri-account-circle-fill"></i>
                       </span>
                       <input
-                        type="email"
+                        type="text"
                         placeholder="Enter your email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -92,12 +105,12 @@ const Login = () => {
                     </div> */}
                   </FormGroup>
                   <button type="submit" className="auth__btn">
-                    Login
+                    Đăng nhập
                   </button>
                   <p>
-                    Don't have an account?
+                    Chưa có tài khoản?
                     <u>
-                      <Link to="/signup">Create an account</Link>
+                      <Link to="/signup">Tạo tài khoản mới</Link>
                     </u>
                   </p>
                 </Form>

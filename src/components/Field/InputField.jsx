@@ -8,9 +8,9 @@ function InputField(props) {
     form,
     required,
     placeholder,
-    variant,
     ref,
     style,
+    labelStyle,
     ...otherProps
   } = props;
   const { onChange, onBlur, value, name } = field || {};
@@ -23,14 +23,20 @@ function InputField(props) {
   return (
     <div style={{ height: "95px" }}>
       {!!label && (
-        <label className="d-flex mb-2" htmlFor={name}>
+        <label
+          className={"d-flex mb-2"}
+          style={{ color: labelStyle }}
+          htmlFor={name}
+        >
           {label}
-          {required && <span style={{ color: "red" }}>*</span>}:
+          {required && (
+            <span style={{ color: "red", fontWeight: "inherit" }}>(*)</span>
+          )}
+          :
         </label>
       )}
       <input
-        // onChange={props?.onChange || onChange}
-        onChange={onChange}
+        onChange={props?.onChange || onChange}
         onBlur={props?.onBlur || onBlur}
         label={label}
         type={type}
@@ -40,14 +46,6 @@ function InputField(props) {
         placeholder={placeholder}
         ref={ref}
         style={style}
-        // helperText={
-        //   touched[field.name] &&
-        //   errors[field.name] && (
-        //     <p style={{ color: "red", margin: "0", fontSize: "10px" }}>
-        //       {errors[field.name]}
-        //     </p>
-        // )
-        // }
         {...otherProps}
       />
       {isShowErrMessage ? (

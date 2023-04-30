@@ -96,7 +96,7 @@ const ProductDetails = () => {
           <Row>
             <Col>
               <span className="btn__back">
-                <i class="ri-arrow-drop-left-line"></i>
+                <i className="ri-arrow-drop-left-line"></i>
               </span>
             </Col>
           </Row>

@@ -1,13 +1,75 @@
 import React from "react";
 import "../styles/checkout.css";
-import { Col, Container, Form, FormGroup, Row } from "reactstrap";
 import Helmet from "../components/Helmet/Helmet";
 import CommonSection from "../components/UI/CommonSection";
+
+import { Col, Container, FormGroup, Row } from "reactstrap";
+import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import useAuth from "../custom-hooks/useAuth";
+
+import InputField from "../components/Field/InputField";
+import TextAreaField from "../components/Field/TextAreaField";
+
+import { Formik, Field, Form } from "formik";
+import * as Yup from "yup";
+
+import { db } from "../firebase.config";
+import { collection, addDoc } from "firebase/firestore";
 
 const Checkout = () => {
-  const totalQty = useSelector((state) => state.cart.totalQuantity);
-  const totalAmount = useSelector((state) => state.cart.totalAmount);
+  const { cartItems, totalQuantity, totalAmount } = useSelector(
+    (state) => state.cart
+  );
+
+  // const totalAmount = useSelector((state) => state.cart.totalAmount);
+  const { currentUser } = useAuth();
+
+  const addOrder = async (values) => {
+    const { customerName, customerNumber, customerAddress, note } = values;
+
+    if (totalQuantity === 0) {
+      toast.error("Bạn chưa có sản phẩm nào trong giỏ hàng");
+    } else {
+      try {
+        const docRef = collection(db, "orders");
+
+        await addDoc(docRef, {
+          customerName: customerName,
+          customerNumber: customerNumber,
+          customerAddress: customerAddress,
+          note: note,
+          customerEmail: currentUser?.email,
+          item: [...cartItems],
+          totalQuantity: totalQuantity,
+          totalAmount: totalAmount,
+        });
+
+        // clearForm();
+        toast.success("Bạn đã đặt hàng thành công");
+      } catch (error) {
+        toast.error(error);
+      }
+    }
+  };
+
+  const initialValues = {
+    customerName: "",
+    customerNumber: "",
+    customerAddress: "",
+    note: "",
+  };
+
+  const vnf_regex = /((09|03|07|08|05)+([0-9]{8})\b)/g;
+
+  const validationSchema = Yup.object().shape({
+    customerName: Yup.string().required("Trường này là bắt buộc"),
+    customerNumber: Yup.string().matches(
+      vnf_regex,
+      "Vui lòng nhập số điện thoại hợp lệ bao gồm 10 chữ số"
+    ),
+    customerAddress: Yup.string().required("Trường này là bắt buộc"),
+  });
 
   return (
     <Helmet title="Thông tin đặt hàng">
@@ -17,7 +79,7 @@ const Checkout = () => {
           <Row>
             <Col>
               <span className="btn__back">
-                <i class="ri-arrow-drop-left-line"></i>
+                <i className="ri-arrow-drop-left-line"></i>
               </span>
             </Col>
           </Row>
@@ -30,33 +92,67 @@ const Checkout = () => {
                   trợ tốt nhất!
                 </h6>
               </i>
-              <Form className="billing__form">
-                <FormGroup className="form__group">
-                  <h6 className="mb-2">Họ và tên:</h6>
-                  <input type="text" placeholder="Nhập họ tên" />
-                </FormGroup>
-                <FormGroup className="form__group">
-                  <h6 className="mb-2">Số điện thoại:</h6>
-                  <input type="number" placeholder="Nhập số điện thoại" />
-                </FormGroup>
-                <FormGroup className="form__group">
-                  <h6 className="mb-2">Địa chỉ:</h6>
-                  <input type="text" placeholder="Nhập địa chỉ" />
-                </FormGroup>
-                <FormGroup className="form__group">
-                  <h6 className="mb-2">Ghi chú:</h6>
-                  <input type="text" placeholder="Ghi chú" />
-                </FormGroup>
-                <FormGroup className="form__group">
-                  <h6 className="mb-2">Phương thức thanh toán:</h6>
-                  <input type="text" placeholder="Phương thức" />
-                </FormGroup>
-              </Form>
+              <Formik
+                initialValues={initialValues}
+                validationSchema={validationSchema}
+                // innerRef={formikRef}
+                onSubmit={addOrder}
+              >
+                {(props) => {
+                  return (
+                    <Form>
+                      <FormGroup className="form__group">
+                        <Field
+                          name="customerName"
+                          component={InputField}
+                          label="Họ và tên"
+                          placeholder="Nhập họ tên"
+                          required
+                        />
+                      </FormGroup>
+                      <FormGroup className="form__group">
+                        <Field
+                          name="customerNumber"
+                          component={InputField}
+                          label="Số điện thoại"
+                          placeholder="Nhập số điện thoại"
+                          required
+                        />
+                      </FormGroup>
+                      <FormGroup className="form__group">
+                        <Field
+                          name="customerAddress"
+                          component={InputField}
+                          label="Địa chỉ giao hàng"
+                          placeholder="Nhập địa chỉ"
+                          required
+                        />
+                      </FormGroup>
+                      <FormGroup className="form__group">
+                        <Field
+                          name="note"
+                          component={TextAreaField}
+                          rows="2"
+                          label="Ghi chú cho người bán"
+                          placeholder="Viết ghi chú"
+                        />
+                      </FormGroup>
+
+                      <button className="buy__btn" type="submit">
+                        Tạo đơn hàng
+                      </button>
+                      <button className="buy__btn" type="reset">
+                        Clear
+                      </button>
+                    </Form>
+                  );
+                }}
+              </Formik>
             </Col>
             <Col lg="4">
               <div className="checkout__cart">
                 <h6>
-                  Tổng sản phẩm: <span>{totalQty} sản phẩm</span>
+                  Tổng sản phẩm: <span>{totalQuantity} sản phẩm</span>
                 </h6>
                 <h6>
                   Tổng tiền:
@@ -73,7 +169,7 @@ const Checkout = () => {
                 <div className="total__cost mt-2">
                   <span>{totalAmount} đ</span>
                 </div>
-                <button className="buy__btn auth__btn w-100">Đặt hàng</button>
+                {/* <button className="buy__btn auth__btn w-100">Đặt hàng</button> */}
               </div>
             </Col>
           </Row>

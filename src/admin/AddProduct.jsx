@@ -36,48 +36,35 @@ const listCategory = [
 ];
 
 function AddProduct(props) {
-  // const [enterTitle, setEnterTitle] = useState("");
-  // const [shortDesc, setShortDesc] = useState("");
-  // const [description, setDescription] = useState("");
-  // const [category, setCategory] = useState("");
-  // const [price, setPrice] = useState("");
-  const [imagePath, setImage] = useState(null);
-  // const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState(null);
 
   const formikRef = useRef();
 
-  const getImageName = (path) => {
-    const array = path.split("\\");
-    const imageName = array[array.length - 1];
-    return imageName;
-  };
-
   const clearForm = () => {
     formikRef.current.setFieldValue("productName", "");
+    formikRef.current.setFieldValue("shortDesc", "");
+    formikRef.current.setFieldValue("description", "");
+    formikRef.current.setFieldValue("category", "");
+    formikRef.current.setFieldValue("price", "");
+    formikRef.current.setFieldValue("imageFormik", "");
     setImage(null);
   };
 
-  console.log(imagePath);
+  console.log(image);
 
   const addProduct = async (values) => {
-    // e.preventDefault();
     // add product firebase database
 
-    const { productName, shortDesc, description, category, price, image } =
-      values;
+    const { productName, shortDesc, description, category, price } = values;
     console.log(formikRef);
-    console.log(image);
-
-    // setImage(getImageName(image));
 
     try {
       const docRef = collection(db, "products");
       const storageRef = ref(
         storage,
-        // `productImages/${Date.now() + values.image}`
-        `productImages/${Date.now() + imagePath.name}`
+        `productImages/${Date.now() + image.name}`
       );
-      const uploadTask = uploadBytesResumable(storageRef, imagePath);
+      const uploadTask = uploadBytesResumable(storageRef, image);
 
       uploadTask.on(
         () => {
@@ -96,12 +83,32 @@ function AddProduct(props) {
           });
         }
       );
-      // clearForm();
+      clearForm();
       toast.success("Add product successful");
     } catch (error) {
       toast.error(error);
     }
   };
+
+  const initialValues = {
+    productName: "",
+    shortDesc: "",
+    description: "",
+    category: "",
+    price: "",
+    imageFormik: "",
+  };
+
+  const validationSchema = Yup.object().shape({
+    productName: Yup.string().required("Trường này là bắt buộc"),
+    shortDesc: Yup.string().required("Trường này là bắt buộc"),
+    description: Yup.string().required("Trường này là bắt buộc"),
+    category: Yup.string().required("Trường này là bắt buộc"),
+    price: Yup.number("Trường này phải là số").required(
+      "Trường này là bắt buộc"
+    ),
+    imageFormik: Yup.string().required("Trường này là bắt buộc"),
+  });
 
   return (
     <section>
@@ -110,24 +117,10 @@ function AddProduct(props) {
           <Col lg="12">
             <h4 className="mb-5">Thêm mới sản phẩm</h4>
             <Formik
-              initialValues={{
-                productName: "",
-                shortDesc: "",
-                description: "",
-                category: "",
-                price: "",
-                image: "",
-              }}
-              onSubmit={addProduct}
+              initialValues={initialValues}
+              validationSchema={validationSchema}
               innerRef={formikRef}
-              validationSchema={Yup.object().shape({
-                productName: Yup.string().required("Trường này là bắt buộc"),
-                shortDesc: Yup.string().required("Trường này là bắt buộc"),
-                description: Yup.string().required("Trường này là bắt buộc"),
-                category: Yup.string().required("Trường này là bắt buộc"),
-                price: Yup.number().required("Trường này là bắt buộc"),
-                image: Yup.string().required("Trường này là bắt buộc"),
-              })}
+              onSubmit={addProduct}
             >
               {(props) => {
                 return (
@@ -145,7 +138,7 @@ function AddProduct(props) {
                       <Field
                         name="shortDesc"
                         component={TextAreaField}
-                        rows="3"
+                        rows="2"
                         label="Mô tả ngắn"
                         placeholder="Viết mô tả"
                         required
@@ -184,10 +177,13 @@ function AddProduct(props) {
                     </div>
                     <FormGroup className="form__group">
                       <Field
-                        name="image"
+                        name="imageFormik"
                         type="file"
                         onChange={(e) => {
-                          props.setFieldValue("image", e.currentTarget.value);
+                          props.setFieldValue(
+                            "imageFormik",
+                            e.currentTarget.value
+                          );
                           setImage(e.target.files[0]);
                         }}
                         component={InputField}
@@ -198,9 +194,9 @@ function AddProduct(props) {
                     </FormGroup>
 
                     <button className="buy__btn" type="submit">
-                      Add Product
+                      Thêm sản phẩm
                     </button>
-                    <button className="buy__btn" onClick={clearForm}>
+                    <button className="buy__btn" type="reset">
                       Clear
                     </button>
                   </Form>

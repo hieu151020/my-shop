@@ -23,11 +23,11 @@ const ModalConfirmDelete = ({ open, toggle, onSubmit, content }) => {
         <h5>Bạn có chắc chắn muốn xóa {content} này không?</h5>
       </ModalBody>
       <ModalFooter>
-        <Button color="primary" onClick={confirm}>
-          Có
-        </Button>
         <Button color="secondary" onClick={toggle}>
           Không
+        </Button>
+        <Button color="primary" onClick={confirm}>
+          Có
         </Button>
       </ModalFooter>
     </Modal>

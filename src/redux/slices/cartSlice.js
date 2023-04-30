@@ -30,6 +30,7 @@ const cartSlice = createSlice({
       } else {
         existingItem.quantity++;
         existingItem.totalPrice =
+          // let result = text.replace(/[.]/g,'')
           Number(existingItem.totalPrice) + Number(newItem.price);
       }
 

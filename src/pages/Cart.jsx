@@ -59,7 +59,7 @@ const Cart = () => {
                   <table className="table bordered">
                     <thead>
                       <tr>
-                        <th>Image</th>
+                        <th>Ảnh</th>
                         <th>Tên sản phẩm</th>
                         <th>Giá</th>
                         <th>Số lượng</th>

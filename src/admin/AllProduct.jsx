@@ -1,11 +1,13 @@
 import React from "react";
 import { Container, Row, Col } from "reactstrap";
-import { db } from "../firebase.config";
-import { doc, deleteDoc, updateDoc } from "firebase/firestore";
-import useGetData from "../custom-hooks/useGetData";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
+
+import { db } from "../firebase.config";
+import { doc, deleteDoc, updateDoc } from "firebase/firestore";
+
+import useGetData from "../custom-hooks/useGetData";
 import { modalActions } from "../redux/slices/modalSlice";
 import ModalConfirmDelete from "../components/Modal/ModalConfirmDelete";
 import useToggleDialog from "../custom-hooks/useToggleDialog";
@@ -38,7 +40,7 @@ function AllProduct(props) {
             <table className="table">
               <thead>
                 <tr>
-                  <th>Image</th>
+                  <th>Ảnh</th>
                   <th>Tên sản phẩm</th>
                   <th>Loại sản phẩm</th>
                   <th>Giá</th>
