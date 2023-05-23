@@ -49,9 +49,6 @@ function SelectField(props) {
         style={{ display: "block" }}
         {...otherProps}
       >
-        <option value="">
-          ------------------------Choose Category------------------------
-        </option>
         {items}
       </select>
       {isShowErrMessage ? (

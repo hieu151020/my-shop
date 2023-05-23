@@ -18,6 +18,9 @@ function Orders(props) {
     <section>
       <Container>
         <Row>
+        <Col lg="12">
+            <h4 className="fw-bold mb-5">Quản lí đơn hàng</h4>
+          </Col>
           <Col lg="12">
             <table className="table">
               <thead>
@@ -30,6 +33,7 @@ function Orders(props) {
                   <th>Thành tiền</th>
                   <th>Địa chỉ giao hàng</th>
                   <th>Giao hàng</th>
+                  <th>Hủy đơn</th>
                 </tr>
               </thead>
               <tbody>
@@ -38,13 +42,23 @@ function Orders(props) {
                 ) : (
                   orderData.map((item) => (
                     <tr key={item.id}>
-                      <td>25/4/2023</td>
+                      <td>{item.checkoutDate}</td>
                       <td>{item.customerEmail}</td>
-                      <td>{item.item.map((i) => i.productName)}</td>
+                      <td>{item.item.map((i) => <div>{i.productName}</div>)}</td>
                       <td>{item.totalQuantity}</td>
                       <td>{item.totalQuantity}</td>
                       <td>{item.totalAmount}đ</td>
                       <td>{item.customerAddress}</td>
+                      <td>
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => {
+                           
+                          }}
+                        >
+                          Giao
+                        </button>
+                      </td>
                       <td>
                         <button
                           className="btn btn-danger"
@@ -52,7 +66,7 @@ function Orders(props) {
                             showModalDeleteProduct(item);
                           }}
                         >
-                          Giao
+                          Hủy
                         </button>
                       </td>
                     </tr>

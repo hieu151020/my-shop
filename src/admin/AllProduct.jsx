@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useMemo } from "react";
+import '../styles/all-products.css'
 import { Container, Row, Col } from "reactstrap";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
@@ -31,19 +32,32 @@ function AllProduct(props) {
 
   return (
     <section>
-      <Container>
-        <Link to="/dashboard/add-products">
+        <Row>
+          <div className="left-nav">
+
+            <div >
+              <h3 className="pb-3 mb-4 mt-3 title__left-nav">Danh mục sản phẩm</h3>
+              <ul className="filter__product__list">
+                <li className="mb-2 ">Nam</li>
+                <li className="mb-2">Nữ</li>
+                <li className="mb-2">Cặp đôi</li>
+              </ul>
+
+            </div>
+          </div>
+          <Col lg="9">
+          <Link to="/dashboard/add-products">
           <button className="btn btn-primary mb-5">Thêm sản phẩm mới</button>
         </Link>
-        <Row>
-          <Col lg="12">
             <table className="table">
               <thead>
                 <tr>
                   <th>Ảnh</th>
                   <th>Tên sản phẩm</th>
                   <th>Loại sản phẩm</th>
+                  <th>Hãng sản xuất</th>
                   <th>Giá</th>
+                  <th>Sửa</th>
                   <th>Xóa</th>
                 </tr>
               </thead>
@@ -51,32 +65,46 @@ function AllProduct(props) {
                 {loading ? (
                   <h4 className="py-5 text-center fw-bold">Loading data....</h4>
                 ) : (
-                  productData.map((item) => (
-                    <tr key={item.id}>
-                      <td>
-                        <img src={item.imgUrl} alt="" />
-                      </td>
-                      <td>{item.productName}</td>
-                      <td>{item.category}</td>
-                      <td>{item.price}VND</td>
-                      <td>
-                        <button
-                          className="btn btn-danger"
-                          onClick={() => {
-                            showModalDeleteProduct(item);
-                          }}
-                        >
-                          Xóa
-                        </button>
-                      </td>
-                    </tr>
-                  ))
+                  productData.map((item) => {
+                    let price = item.price
+                    price = +price
+                    return (
+                      <tr key={item.id}>
+                        <td>
+                          <img src={item.imgUrl} alt="" />
+                        </td>
+                        <td>{item.productName}</td>
+                        <td>{item.category}</td>
+                        <td>{item.manufacture}</td>
+                        <td>{price.toLocaleString('vi-VN')} đ</td>
+                        <td>
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => {
+                             
+                            }}
+                          >
+                            Sửa
+                          </button>
+                        </td>
+                        <td>
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => {
+                              showModalDeleteProduct(item);
+                            }}
+                          >
+                            Xóa
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })
                 )}
               </tbody>
             </table>
           </Col>
         </Row>
-      </Container>
       {shouldRender && (
         <ModalConfirmDelete
           toggle={toggle}

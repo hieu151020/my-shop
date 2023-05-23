@@ -21,6 +21,9 @@ const Checkout = () => {
   const { cartItems, totalQuantity, totalAmount } = useSelector(
     (state) => state.cart
   );
+  const checkoutDate = new Date()
+
+  console.log('checkoutDate',checkoutDate.toLocaleDateString());
 
   // const totalAmount = useSelector((state) => state.cart.totalAmount);
   const { currentUser } = useAuth();
@@ -43,6 +46,7 @@ const Checkout = () => {
           item: [...cartItems],
           totalQuantity: totalQuantity,
           totalAmount: totalAmount,
+          checkoutDate:checkoutDate.toLocaleDateString(),
         });
 
         // clearForm();
@@ -67,7 +71,7 @@ const Checkout = () => {
     customerNumber: Yup.string().matches(
       vnf_regex,
       "Vui lòng nhập số điện thoại hợp lệ bao gồm 10 chữ số"
-    ),
+    ).required("Trường này là bắt buộc"),
     customerAddress: Yup.string().required("Trường này là bắt buộc"),
   });
 
@@ -169,7 +173,7 @@ const Checkout = () => {
                 <div className="total__cost mt-2">
                   <span>{totalAmount} đ</span>
                 </div>
-                {/* <button className="buy__btn auth__btn w-100">Đặt hàng</button> */}
+                <button className="buy__btn auth__btn w-100">Đặt hàng</button>
               </div>
             </Col>
           </Row>

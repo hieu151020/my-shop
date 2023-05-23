@@ -1,42 +1,72 @@
-.revenue__box, 
-.order__box, 
+.dashboard__section {
+  background-color: #fcfcff;
+}
+
+.revenue__box,
+.order__box,
 .products__box,
-.users__box{
-    padding: 30px;
-    border-radius: 5px;
+.users__box {
+  position: relative;
+  padding: 30px;
+  border-radius: 5px;
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
 }
 
-.revenue__box{
-    background: var(--card-bg-02);
+.revenue__box {
+  border-left: 0.25rem solid #4e73df !important;
 }
 
-.order__box{
-    background: var(--card-bg-01);
+.order__box {
+  border-left: 0.25rem solid #1cc88a !important;
 }
 
-.products__box{
-    background: var(--card-bg-03);
+.products__box {
+  border-left: 0.25rem solid #36b9cc !important;
 }
 
-.users__box{
-    background: var(--card-bg-04);
+.users__box {
+  border-left: 0.25rem solid #f6c23e !important;
 }
 
-.revenue__box h5, 
-.order__box  h5, 
+.revenue__box h5{
+    color: #4e73df;
+}
+
+.order__box h5{
+    color: #1cc88a;
+}
+
+.products__box h5{
+    color: #36b9cc;
+}
+
+.users__box h5{
+    color: #f6c23e;
+}
+
+.revenue__box h5,
+.order__box h5,
 .products__box h5,
 .users__box h5 {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: var(--primary-color);
-    margin-bottom: 20px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 10px;
 }
 
-.revenue__box span, 
-.order__box  span, 
+.revenue__box span,
+.order__box span,
 .products__box span,
-.users__box span{
-    color: var(--primary-color);
-    font-weight: 600;
-    font-size: 2rem;
+.users__box span {
+  color: var(--primary-color);
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.dashboard__icon {
+  position: absolute;
+  right: 7px;
+  top:30%;
+  font-size: 35px;
+  color: #c1c1c8;
 }

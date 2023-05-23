@@ -27,7 +27,7 @@ const ProductsCard = ({ item }) => {
     <Col lg="3" md="4">
       <div className="product__item">
         <div className="product__img">
-          <motion.img whileHover={{ scale: 0.9 }} src={item.imgUrl} alt="" />
+          <motion.img whileHover={{ scale: 1.03 }} src={item.imgUrl} alt="" />
         </div>
         <div className="p-2 product__info">
           <h3 className="product__name">
@@ -43,6 +43,7 @@ const ProductsCard = ({ item }) => {
             onClick={addToCard}
           >
             <i className="ri-add-line "></i>
+            {/* <button className="buy__btn">Add to card</button> */}
           </motion.span>
         </div>
       </div>

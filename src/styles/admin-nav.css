@@ -25,6 +25,7 @@
 .admin__nav-top-right{
     display: flex;
     align-items: center;
+    margin-right: 40px;
     column-gap: 2rem;
 }
 
@@ -35,14 +36,39 @@
 }
 
 .admin__nav-top-right span i{
+    font-size: 20px;
     color: whitesmoke;
     cursor: pointer;
 }
 
-.admin__nav-wrapper-top .logo h2{
+.admin__nav-wrapper-top .logo h3{
+    text-align: center;
+    width: 200px;
     font-size: 1.5rem;
     color: whitesmoke;
 
+}
+
+.mail__admin,
+.noti__admin{
+    position: relative;
+}
+
+.badge__admin{
+    position: absolute;
+    top: 0;
+    right: -35%;
+    width: 15px;
+    height: 15px;
+    background-color: red;
+    color: #fff;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    z-index: 10;
 }
 
 .admin__menu{

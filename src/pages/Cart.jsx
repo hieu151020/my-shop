@@ -44,7 +44,7 @@ const Cart = () => {
       {totalAmount === 0 ? (
         <h2 className="fs-4 text-center mt-5 mb-5">
           Bạn chưa thêm gì vào giỏ hàng
-          <Col lg="2" style={{ marginLeft: "550px" }}>
+          <Col lg="2" style={{ marginLeft: "41%" }}>
             <button className="buy__btn w-100 mt-3">
               <Link to="/shop">Mua hàng ngay!!</Link>
             </button>

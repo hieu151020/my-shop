@@ -12,7 +12,22 @@ import InputField from "../components/Field/InputField";
 import TextAreaField from "../components/Field/TextAreaField";
 import SelectField from "../components/Field/SelectField";
 
+const listManufacture = [
+  {
+    name:"------------------------Choose Manufacture------------------------",
+    value:''
+  },
+  {
+    name: "Casio",
+    value: "casio",
+  },
+]
+
 const listCategory = [
+  {
+    name:"------------------------Choose Category------------------------",
+    value:''
+  },
   {
     name: "Ghế",
     value: "chair",
@@ -28,6 +43,18 @@ const listCategory = [
   {
     name: "Đồng hồ",
     value: "watch",
+  },
+  {
+    name: "Nam",
+    value: "men",
+  },
+  {
+    name: "Nữ",
+    value: "woman",
+  },
+  {
+    name: "Cặp đôi",
+    value: "wireless",
   },
   {
     name: "Tai nghe",
@@ -55,7 +82,7 @@ function AddProduct(props) {
   const addProduct = async (values) => {
     // add product firebase database
 
-    const { productName, shortDesc, description, category, price } = values;
+    const { productName, shortDesc, description, category,manufacture, price } = values;
     console.log(formikRef);
 
     try {
@@ -77,6 +104,7 @@ function AddProduct(props) {
               shortDesc: shortDesc,
               description: description,
               category: category,
+              manufacture:manufacture,
               price: price,
               imgUrl: dowloadURL,
             });
@@ -95,6 +123,7 @@ function AddProduct(props) {
     shortDesc: "",
     description: "",
     category: "",
+    manufacture:"",
     price: "",
     imageFormik: "",
   };
@@ -104,6 +133,7 @@ function AddProduct(props) {
     shortDesc: Yup.string().required("Trường này là bắt buộc"),
     description: Yup.string().required("Trường này là bắt buộc"),
     category: Yup.string().required("Trường này là bắt buộc"),
+    manufacture: Yup.string().required("Trường này là bắt buộc"),
     price: Yup.number("Trường này phải là số").required(
       "Trường này là bắt buộc"
     ),
@@ -155,15 +185,7 @@ function AddProduct(props) {
                       />
                     </FormGroup>
                     <div className="d-flex align-items-center justify-content-between gap-5">
-                      <FormGroup className="form__group w-50">
-                        <Field
-                          name="price"
-                          component={InputField}
-                          label="Giá sản phẩm"
-                          placeholder="Nhập giá sản phẩm"
-                          required
-                        />
-                      </FormGroup>
+                      
                       <FormGroup className="form__group w-50">
                         <Field
                           name="category"
@@ -174,8 +196,28 @@ function AddProduct(props) {
                           required
                         />
                       </FormGroup>
+                      <FormGroup className="form__group w-50">
+                        <Field
+                          name="manufacture"
+                          className="w-100 p-2"
+                          component={SelectField}
+                          options={listManufacture}
+                          label="Hãng sản xuất"
+                          required
+                        />
+                      </FormGroup>
                     </div>
-                    <FormGroup className="form__group">
+                    <div className="d-flex align-items-center justify-content-between gap-5">
+                    <FormGroup className="form__group w-50">
+                        <Field
+                          name="price"
+                          component={InputField}
+                          label="Giá sản phẩm"
+                          placeholder="Nhập giá sản phẩm"
+                          required
+                        />
+                      </FormGroup>
+                    <FormGroup className="form__group w-50">
                       <Field
                         name="imageFormik"
                         type="file"
@@ -192,6 +234,7 @@ function AddProduct(props) {
                         required
                       />
                     </FormGroup>
+                    </div>
 
                     <button className="buy__btn" type="submit">
                       Thêm sản phẩm

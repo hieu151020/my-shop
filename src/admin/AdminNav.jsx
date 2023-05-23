@@ -29,12 +29,11 @@ function AdminNav(props) {
     <>
       <header className="admin__header">
         <div className="admin__nav-top">
-          <Container>
             <div className="admin__nav-wrapper-top">
               <div className="logo">
                 <span>
                   <Link to={"/"}>
-                    <h2>My Shop</h2>
+                    <h3>Admin Dashboard</h3>
                   </Link>
                 </span>
               </div>
@@ -45,16 +44,19 @@ function AdminNav(props) {
                 </span>
               </div>
               <div className="admin__nav-top-right">
-                <span>
+                <span className="noti__admin">
                   <i className="ri-notification-3-line"></i>
+                <span className="badge__admin">1</span>
                 </span>
-                <span>
-                  <i className="ri-settings-2-line"></i>
+                <span className="mail__admin">
+                <i class="ri-mail-line"></i>
+                <span className="badge__admin">1</span>
                 </span>
                 <img src={currentUser && currentUser.photoURL} alt="" />
               </div>
             </div>
-          </Container>
+          {/* <Container>
+          </Container> */}
         </div>
       </header>
       <section className="admin__menu p-0">

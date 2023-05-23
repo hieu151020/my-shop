@@ -1,0 +1,25 @@
+.left-nav {
+    width: 21%;
+    background-color: #1b3d6b;
+    color: whitesmoke;
+    /* max-height: 500px; */
+}
+
+.title__left-nav{
+    border-bottom: 1px solid rgba(255,255,255,.15);
+}
+
+.filter__product__list{
+    padding-left:0px !important;
+}
+
+.filter__product__list li{
+    color: rgba(255,255,255,.8) !important;
+    cursor: pointer;
+    padding: 5px 7px 5px;
+}
+
+.filter__product__list li:hover{
+    background-color: #275999;
+    /* color:whitesmoke; */
+}

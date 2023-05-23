@@ -1,63 +1,80 @@
-.product__item{
-    margin-bottom: 10px;
-    cursor: pointer;
+.product__item {
+  margin-bottom: 24px;
+  height: 350px;
+  background-color: aliceblue;
+  position: relative;
+  cursor: pointer;
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
 }
 
-.product__img img{
-    width: 216px;
-    height: 200px;
+.product__img {
+  align-items: center;
+  display: flex;
+  justify-content: center;
 }
 
-.product__info h3 a{
+.product__img img {
+  margin-top: 10px;
+  width: 216px;
+  height: 200px;
+}
+
+.product__info h3 a {
+  font-size: 1.1rem;
+  color: var(--primary-color);
+  font-weight: 600;
+  margin-top: 15px;
+}
+
+.product__info a:hover {
+  color: inherit;
+}
+
+.product__info span {
+  font-size: 0.9rem;
+}
+
+.product__card-bottom {
+  position: absolute;
+  width: -webkit-fill-available;
+  bottom: 0px;
+}
+
+.product__card-bottom .price {
+  color: var(--primary-color);
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+
+.product__card-bottom span {
+  padding-right: 30px;
+}
+
+.product__card-bottom span i {
+  margin-right: -20px;
+  font-size: 1.2rem;
+  padding: 5px;
+  background: var(--primary-color);
+  color: #fff;
+  border-radius: 50px;
+}
+
+.add__btn :hover {
+  background: #0a1d37d0;
+}
+
+@media only screen and (max-width: 992px) {
+  .product__info {
     font-size: 1.1rem;
-    color: var(--primary-color);
-    font-weight: 600;
-    margin-top: 15px;
+  }
 }
 
-.product__info a:hover{
-    color:inherit
-}
+@media only screen and (max-width: 768) {
+  .product__info h3 a {
+    font-size: 1rem;
+  }
 
-.product__info span{
-    font-size: 0.9rem;
-
-}
-
-.product__card-bottom .price{
-    color: var(--primary-color);
-    font-size: 1.3rem;
-    font-weight: 500;
-}
-
-.product__card-bottom span{
-    padding-right: 30px;
-}
-
-.product__card-bottom span i{
-    font-size: 1.2rem;
-    padding: 5px;
-    background: var(--primary-color);
-    color: #fff;
-    border-radius: 50px;
-}
-
-.add__btn :hover{
-    background: #0a1d37d0;
-}
-
-@media only screen and (max-width:992px) {
-    .product__info {
-        font-size: 1.1rem;
-    }
-}
-
-@media only screen and (max-width:768) {
-    .product__info h3 a{
-        font-size: 1rem;
-    }
-
-    .product__card-bottom span i{
-        font-size: 1rem;
-    }
+  .product__card-bottom span i {
+    font-size: 1rem;
+  }
 }
