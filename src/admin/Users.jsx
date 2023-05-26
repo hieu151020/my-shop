@@ -8,6 +8,7 @@ import { useDispatch } from "react-redux";
 import { modalActions } from "../redux/slices/modalSlice";
 import useToggleDialog from "../custom-hooks/useToggleDialog";
 import ModalConfirmDelete from "../components/Modal/ModalConfirmDelete";
+import Helmet from "../components/Helmet/Helmet";
 
 function Users(props) {
   const { data: usersData, loading } = useGetData("users");
@@ -26,11 +27,12 @@ function Users(props) {
   };
 
   return (
+    <Helmet title={"Dashboard"}>
     <section>
       <Container>
         <Row>
           <Col lg="12">
-            <h4 className="fw-bold">Users</h4>
+            <h4 className="fw-bold head__title">Users</h4>
           </Col>
           <Col lg="12" className="pt-5">
             <table className="table">
@@ -80,6 +82,7 @@ function Users(props) {
         />
       )}
     </section>
+    </Helmet>
   );
 }
 

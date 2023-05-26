@@ -56,6 +56,25 @@
     color: var(--primary-color);
 }
 
+.visible{
+    position: fixed;
+    right: 7%;
+    bottom: 10%;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0, 0, 0, 0.2);
+    font-size: 25px;
+    opacity: 0.5;
+    border-radius: 4px;
+    z-index: 999;
+    transition: 0.3s all ease-in-out;
+    border: none;
+}
+
+.visible:hover{
+    opacity: 0.7;
+}
+
 @media only screen and (max-width:992px) {
     .hero__content h2{
         font-size: 2rem;

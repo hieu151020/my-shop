@@ -18,6 +18,7 @@ import Clock from "../components/UI/Clock";
 import useGetData from "../custom-hooks/useGetData";
 
 import { useAuthen } from "../providers/Provider";
+import ScrollToTopButton from "../components/UI/ScrollToTopButton";
 
 const Home = () => {
   const [trendingProducts, settrendingProducts] = useState([]);
@@ -163,6 +164,7 @@ const Home = () => {
             )}
           </Row>
         </Container>
+        <ScrollToTopButton/>
       </section>
     </Helmet>
   );

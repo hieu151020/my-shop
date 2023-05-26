@@ -1,7 +1,9 @@
 import React from "react";
 import { Col, Container, Row } from "reactstrap";
 import "../styles/dashboard.css";
+import Helmet from "../components/Helmet/Helmet";
 import useGetData from "../custom-hooks/useGetData";
+import { motion } from "framer-motion";
 import {
   BarChart,
   Bar,
@@ -32,66 +34,66 @@ const Dashboard = () => {
     { name: "T12",  revenue: 4300, amt: 2100 },
   ];
   return (
-    <>
+    <Helmet title={"Dashboard"}>
       <section className="dashboard__section">
         <Container>
           <Row>
           <Col lg="12">
-            <h4 className="fw-bold mb-5">Dashboard</h4>
+            <h4 className="fw-bold mb-5 head__title">Dashboard</h4>
           </Col>
             <Col lg="3" md="6">
-              <div className="revenue__box">
+              <motion.div whileHover={{ scale: 1.1 }} className="revenue__box">
                 <div className='card__content'>
-                  <h5>Total Sales</h5>
+                  <h5>Doanh thu</h5>
                   <span>1.000.000.000đ</span>
                 </div>
                 <div className="dashboard__icon">
-                  <i class="ri-exchange-dollar-line"></i>
+                  <i className="ri-exchange-dollar-line"></i>
                 </div>
-              </div>
+              </motion.div>
             </Col>
             <Col lg="3" md="6">
-              <div className="order__box">
+              <motion.div whileHover={{ scale: 1.1 }} className="order__box">
                 <div className='card__content'>
-                  <h5>Orders</h5>
+                  <h5>Lợi nhuận</h5>
                   <span>1.000.000.000đ</span>
                 </div>
                 <div className="dashboard__icon">
-                  <i class="ri-task-line"></i>
+                  <i className="ri-task-line"></i>
                 </div>
-              </div>
+              </motion.div>
             </Col>
             <Col lg="3" md="6">
-              <div className="products__box">
+              <motion.div whileHover={{ scale: 1.1 }} className="products__box">
                 <div className='card__content'>
-                  <h5>Total Products</h5>
+                  <h5>Sản phẩm</h5>
                   <span>{products.length}</span>
                 </div>
                 <div className="dashboard__icon">
-                  <i class="ri-product-hunt-line"></i>
+                  <i className="ri-product-hunt-line"></i>
                 </div>
-              </div>
+              </motion.div>
             </Col>
             <Col lg="3" md="6">
-              <div className="users__box">
+              <motion.div whileHover={{ scale: 1.1 }} className="users__box">
                 <div className='card__content'>
-                  <h5>Total Users</h5>
+                  <h5>Người dùng</h5>
                   <span>{users.length}</span>
                 </div>
                 <div className="dashboard__icon">
-                  <i class="ri-account-circle-line"></i>
+                  <i className="ri-account-circle-line"></i>
                 </div>
-              </div>
+              </motion.div>
             </Col>
           </Row>
           <Row className="mt-5">
-            <Col className="lg-6 ">
+            <Col className="lg-6 barchart">
               <BarChart
                 width={600}
                 height={350}
                 data={data}
                 margin={{
-                  top: 5,
+                  top: 15,
                   right: 30,
                   left: 20,
                   bottom: 5,
@@ -105,7 +107,7 @@ const Dashboard = () => {
                 <Bar dataKey="revenue" fill="#8884d8" />
               </BarChart>
             </Col>
-            <Col className="lg-6">
+            <Col className="lg-6 linechart ">
               <LineChart width={600} height={350} data={data}>
                 <XAxis dataKey="name" />
                 <YAxis />
@@ -119,7 +121,7 @@ const Dashboard = () => {
           </Row>
         </Container>
       </section>
-    </>
+    </Helmet>
   );
 };
 

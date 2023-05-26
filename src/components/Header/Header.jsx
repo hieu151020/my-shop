@@ -144,7 +144,7 @@ const Header = () => {
                       {!!isAdmin ? (
                         <div className="d-flex align-items-center justify-content-center flex-column">
                           <span onClick={logout}>Đăng xuất</span>
-                          <Link to="/dashboard">
+                          <Link to="/dashboard/main">
                             <span onClick={toggleProfileActions}>
                               Dashboard
                             </span>

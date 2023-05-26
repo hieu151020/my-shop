@@ -7,7 +7,7 @@ import { Link, NavLink } from "react-router-dom";
 const admin__nav = [
   {
     display: "Dashboard",
-    path: "/dashboard",
+    path: "/dashboard/main",
   },
   {
     display: "All Products",
@@ -18,7 +18,7 @@ const admin__nav = [
     path: "/dashboard/orders",
   },
   {
-    display: "Users",
+    display: "Accounts",
     path: "/dashboard/users",
   },
 ];
@@ -49,14 +49,12 @@ function AdminNav(props) {
                 <span className="badge__admin">1</span>
                 </span>
                 <span className="mail__admin">
-                <i class="ri-mail-line"></i>
+                <i className="ri-mail-line"></i>
                 <span className="badge__admin">1</span>
                 </span>
                 <img src={currentUser && currentUser.photoURL} alt="" />
               </div>
             </div>
-          {/* <Container>
-          </Container> */}
         </div>
       </header>
       <section className="admin__menu p-0">
@@ -66,7 +64,7 @@ function AdminNav(props) {
               <ul className="admin__menu-list">
                 {admin__nav.map((item, index) => (
                   <li className="admin__menu-item" key={index}>
-                    <NavLink to={item.path} className="active__admin-menu">
+                    <NavLink to={item.path} >
                       {item.display}
                     </NavLink>
                   </li>

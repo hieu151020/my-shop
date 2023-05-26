@@ -4,13 +4,13 @@ import { toast } from "react-toastify";
 import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
 
-import { db, storage } from "../firebase.config";
+import { db, storage } from "../../firebase.config";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { collection, addDoc } from "firebase/firestore";
 
-import InputField from "../components/Field/InputField";
-import TextAreaField from "../components/Field/TextAreaField";
-import SelectField from "../components/Field/SelectField";
+import InputField from "../../components/Field/InputField";
+import TextAreaField from "../../components/Field/TextAreaField";
+import SelectField from "../../components/Field/SelectField";
 
 const listManufacture = [
   {
@@ -29,22 +29,6 @@ const listCategory = [
     value:''
   },
   {
-    name: "Ghế",
-    value: "chair",
-  },
-  {
-    name: "Sofa",
-    value: "sofa",
-  },
-  {
-    name: "Điện thoại",
-    value: "mobile",
-  },
-  {
-    name: "Đồng hồ",
-    value: "watch",
-  },
-  {
     name: "Nam",
     value: "men",
   },
@@ -54,10 +38,6 @@ const listCategory = [
   },
   {
     name: "Cặp đôi",
-    value: "wireless",
-  },
-  {
-    name: "Tai nghe",
     value: "wireless",
   },
 ];
@@ -72,18 +52,16 @@ function AddProduct(props) {
     formikRef.current.setFieldValue("shortDesc", "");
     formikRef.current.setFieldValue("description", "");
     formikRef.current.setFieldValue("category", "");
+    formikRef.current.setFieldValue("manufacture", "");
     formikRef.current.setFieldValue("price", "");
     formikRef.current.setFieldValue("imageFormik", "");
     setImage(null);
   };
 
-  console.log(image);
-
   const addProduct = async (values) => {
     // add product firebase database
 
     const { productName, shortDesc, description, category,manufacture, price } = values;
-    console.log(formikRef);
 
     try {
       const docRef = collection(db, "products");
@@ -145,7 +123,7 @@ function AddProduct(props) {
       <Container>
         <Row>
           <Col lg="12">
-            <h4 className="mb-5">Thêm mới sản phẩm</h4>
+            <h4 className="fw-bold mb-5 head__title">Thêm mới sản phẩm</h4>
             <Formik
               initialValues={initialValues}
               validationSchema={validationSchema}
@@ -246,88 +224,6 @@ function AddProduct(props) {
                 );
               }}
             </Formik>
-
-            {/* <Form onSubmit={addProduct}>
-              <FormGroup className="form__group">
-                <span>Product title</span>
-                <input
-                  ref={Inputref}
-                  type="text"
-                  placeholder="Title"
-                  value={enterTitle}
-                  onChange={(e) => setEnterTitle(e.target.value)}
-                />
-              </FormGroup>
-              <FormGroup className="form__group">
-                <span>Short Description</span>
-                <input
-                  type="text "
-                  placeholder="Title a"
-                  value={shortDesc}
-                  onChange={(e) => setShortDesc(e.target.value)}
-                />
-              </FormGroup>
-              <FormGroup className="form__group">
-                <span>Description</span>
-                <input
-                  type="text "
-                  placeholder="Title a"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </FormGroup>
-              <div className="d-flex align-items-center justify-content-between gap-5">
-                <FormGroup className="form__group w-50">
-                  <span>Price</span>
-                  <input
-                    type="number"
-                    placeholder="Price"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                  />
-                </FormGroup>
-
-                <FormGroup className="form__group w-50">
-                  <span>Category</span>
-                  <select
-                    className="w-100 p-2"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                  >
-                    <option value="chair">
-                      ------------------------Choose
-                      Category------------------------
-                    </option>
-
-                    <option value="chair">Chair</option>
-                    <option value="sofa">sofa</option>
-                    <option value="mobile">mobile</option>
-                    <option value="watch">watch</option>
-                    <option value="wireless">wireless</option>
-                  </select>
-                </FormGroup>
-              </div>
-
-              <div>
-                <FormGroup className="form__group">
-                  <span>Product Image</span>
-                  <input
-                    id="file"
-                    type="file"
-                    style={{ color: "black" }}
-                    onChange={(e) => {
-                      console.log(e);
-                      setImage(e.target.files[0]);
-                    }}
-                  />
-                </FormGroup>
-              </div>
-
-              <button className="buy__btn" type="submit">
-                Add Product
-              </button>
-              {/* <button className="buy__btn">Clear</button>
-            </Form> */}
           </Col>
         </Row>
       </Container>

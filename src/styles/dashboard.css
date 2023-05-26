@@ -2,6 +2,13 @@
   background-color: #fcfcff;
 }
 
+.head__title{
+  padding-bottom: 10px;
+  width: fit-content;
+  border-bottom: 1px solid rgba(0,0,0,.15);
+  color: var(--primary-color);
+}
+
 .revenue__box,
 .order__box,
 .products__box,
@@ -69,4 +76,15 @@
   top:30%;
   font-size: 35px;
   color: #c1c1c8;
+}
+
+.barchart,
+.linechart{
+  border-radius: 5px;
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
+  padding: 20px 0px 10px 10px;
+}
+
+.barchart{
+  margin-right:20px;
 }
