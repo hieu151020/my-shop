@@ -10,6 +10,7 @@ function InputField(props) {
     placeholder,
     ref,
     style,
+    disable,
     labelStyle,
     ...otherProps
   } = props;
@@ -44,6 +45,7 @@ function InputField(props) {
         name={name}
         value={value}
         placeholder={placeholder}
+        disabled={disable}
         ref={ref}
         style={style}
         {...otherProps}

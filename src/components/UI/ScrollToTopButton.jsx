@@ -27,7 +27,7 @@ const ScrollToTopButton = () => {
       onClick={handleClick}
       className={`scroll-to-top ${isVisible ? 'visible' : ''}`}
     >
-      <i class="ri-arrow-up-s-line"></i>
+      <i className="ri-arrow-up-s-line"></i>
     </button>
   );
 };

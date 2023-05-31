@@ -21,17 +21,6 @@ import SelectField from "../../../components/Field/SelectField";
 import { useSelector } from "react-redux";
 import { db, storage } from "../../../firebase.config";
 
-const listManufacture = [
-  {
-    name: "---------------Choose Manufacture------------------------",
-    value: "",
-  },
-  {
-    name: "Casio",
-    value: "casio",
-  },
-];
-
 const listCategory = [
   {
     name: "---------------Choose Category------------------------",
@@ -51,10 +40,19 @@ const listCategory = [
   },
 ];
 
-const ModalEditProduct = ({ open, toggle }) => {
+const ModalEditProduct = ({ open, toggle, manufactureData, isEdit }) => {
   const [image, setImage] = useState(null);
   const item = useSelector((state) => state.modal.getProduct);
   const formikRef = useRef();
+
+  console.log(item);
+
+  const listManufacture = manufactureData.map((item) => {
+    return {
+      name: item?.manufactureName,
+      value: item?.manufactureValue,
+    };
+  });
 
   const editProduct = (values) => {
     const {
@@ -85,7 +83,7 @@ const ModalEditProduct = ({ open, toggle }) => {
               description: description,
               category: category,
               manufacture: manufacture,
-              price: price.slice(0,-1),
+              price: price,
               imgUrl: dowloadURL,
             });
           });
@@ -94,6 +92,24 @@ const ModalEditProduct = ({ open, toggle }) => {
       setTimeout(() => {
         toggle();
         toast.success("Edit product successful");
+      }, 500);
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
+  const importProduct = (values) => {
+    const { stockNumber, newStockNumber } = values;
+    try {
+      const collectionRef = collection(db, "products");
+      const docRef = doc(collectionRef, item.id);
+      updateDoc(docRef, {
+        stockNumber: Number(stockNumber) + Number(newStockNumber),
+        available: Number(item.available) + Number(newStockNumber),
+      });
+      setTimeout(() => {
+        toggle();
+        toast.success("Import product successful");
       }, 500);
     } catch (error) {
       toast.error(error);
@@ -112,7 +128,7 @@ const ModalEditProduct = ({ open, toggle }) => {
     description: item?.description,
     category: item?.category,
     manufacture: item?.manufacture,
-    price: `${item?.price}đ`,
+    price: item?.price,
     imageFormik: "",
   };
 
@@ -131,117 +147,164 @@ const ModalEditProduct = ({ open, toggle }) => {
   return (
     <section>
       <Modal
-        style={{ minWidth: "800px", marginTop: "-150px" }}
+        style={
+          isEdit
+            ? { minWidth: "800px", marginTop: "-150px" }
+            : { minWidth: "800px" }
+        }
         isOpen={open}
         toggle={toggle}
       >
         <ModalHeader toggle={toggle} close={closeBtn}>
-          Sửa sản phẩm
+          {isEdit ? "Sửa sản phẩm" : `Nhập sản phẩm: ${item?.productName}`}
         </ModalHeader>
         <ModalBody toggle={toggle} close={closeBtn}>
           <Container>
             <Row>
-              <Col lg="12">
-                <Formik
-                  initialValues={initialValues}
-                  validationSchema={validationSchema}
-                  innerRef={formikRef}
-                  onSubmit={(values) => editProduct(values)}
-                >
-                  {(props) => {
-                    return (
+              {isEdit ? (
+                <Col lg="12">
+                  <Formik
+                    initialValues={initialValues}
+                    validationSchema={validationSchema}
+                    innerRef={formikRef}
+                    onSubmit={(values) => editProduct(values)}
+                  >
+                    {(props) => {
+                      return (
+                        <Form>
+                          <FormGroup className="form__group">
+                            <Field
+                              name="productName"
+                              component={InputField}
+                              label="Tên sản phẩm"
+                              placeholder="Nhập tên sản phẩm"
+                              required
+                            />
+                          </FormGroup>
+                          <FormGroup className="form__group">
+                            <Field
+                              name="shortDesc"
+                              component={TextAreaField}
+                              rows="2"
+                              label="Mô tả ngắn"
+                              placeholder="Viết mô tả"
+                              required
+                            />
+                          </FormGroup>
+                          <FormGroup className="form__group">
+                            <Field
+                              name="description"
+                              component={TextAreaField}
+                              rows="6"
+                              label="Chi tiết sản phẩm"
+                              placeholder="Mô tả chi tiết"
+                              required
+                            />
+                          </FormGroup>
+                          <div className="d-flex align-items-center justify-content-between gap-5">
+                            <FormGroup className="form__group w-50">
+                              <Field
+                                name="category"
+                                className="w-100 p-2"
+                                component={SelectField}
+                                options={listCategory}
+                                label="Loại sản phẩm"
+                                required
+                              />
+                            </FormGroup>
+                            <FormGroup className="form__group w-50">
+                              <Field
+                                name="manufacture"
+                                className="w-100 p-2"
+                                component={SelectField}
+                                options={listManufacture}
+                                label="Hãng sản xuất"
+                                required
+                              />
+                            </FormGroup>
+                          </div>
+                          <div className="d-flex align-items-center justify-content-between gap-5">
+                            <FormGroup className="form__group w-50">
+                              <Field
+                                name="price"
+                                component={InputField}
+                                label="Giá sản phẩm"
+                                placeholder="Nhập giá sản phẩm"
+                                required
+                              />
+                            </FormGroup>
+                            <FormGroup className="form__group w-50">
+                              <Field
+                                name="imageFormik"
+                                type="file"
+                                onChange={(e) => {
+                                  props.setFieldValue(
+                                    "imageFormik",
+                                    e.currentTarget.value
+                                  );
+                                  setImage(e.target.files[0]);
+                                }}
+                                component={InputField}
+                                style={{ color: "black" }}
+                                label="Ảnh của sản phẩm"
+                                required
+                              />
+                            </FormGroup>
+                          </div>
+                          <button className="buy__btn" type="submit">
+                            Lưu
+                          </button>
+                          <button className="buy__btn" onClick={toggle}>
+                            Đóng
+                          </button>
+                        </Form>
+                      );
+                    }}
+                  </Formik>
+                </Col>
+              ) : (
+                <Col lg="12">
+                  <Formik
+                    initialValues={{
+                      stockNumber: item?.stockNumber,
+                      newStockNumber: "",
+                    }}
+                    validationSchema={Yup.object().shape({
+                      newStockNumber: Yup.number(
+                        "Trường này phải là số"
+                      ).required("Trường này là bắt buộc"),
+                    })}
+                    onSubmit={(values) => importProduct(values)}
+                  >
+                    {(props) => (
                       <Form>
-                        <FormGroup className="form__group">
-                          <Field
-                            name="productName"
-                            component={InputField}
-                            label="Tên sản phẩm"
-                            placeholder="Nhập tên sản phẩm"
-                            required
-                          />
-                        </FormGroup>
-                        <FormGroup className="form__group">
-                          <Field
-                            name="shortDesc"
-                            component={TextAreaField}
-                            rows="2"
-                            label="Mô tả ngắn"
-                            placeholder="Viết mô tả"
-                            required
-                          />
-                        </FormGroup>
-                        <FormGroup className="form__group">
-                          <Field
-                            name="description"
-                            component={TextAreaField}
-                            rows="6"
-                            label="Chi tiết sản phẩm"
-                            placeholder="Mô tả chi tiết"
-                            required
-                          />
-                        </FormGroup>
                         <div className="d-flex align-items-center justify-content-between gap-5">
                           <FormGroup className="form__group w-50">
                             <Field
-                              name="category"
-                              className="w-100 p-2"
-                              component={SelectField}
-                              options={listCategory}
-                              label="Loại sản phẩm"
-                              required
+                              name="stockNumber"
+                              component={InputField}
+                              label="Số lượng sản phẩm có trong kho"
+                              disable
                             />
                           </FormGroup>
                           <FormGroup className="form__group w-50">
                             <Field
-                              name="manufacture"
-                              className="w-100 p-2"
-                              component={SelectField}
-                              options={listManufacture}
-                              label="Hãng sản xuất"
-                              required
-                            />
-                          </FormGroup>
-                        </div>
-                        <div className="d-flex align-items-center justify-content-between gap-5">
-                          <FormGroup className="form__group w-50">
-                            <Field
-                              name="price"
+                              name="newStockNumber"
                               component={InputField}
                               label="Giá sản phẩm"
                               placeholder="Nhập giá sản phẩm"
                               required
                             />
                           </FormGroup>
-                          <FormGroup className="form__group w-50">
-                            <Field
-                              name="imageFormik"
-                              type="file"
-                              onChange={(e) => {
-                                props.setFieldValue(
-                                  "imageFormik",
-                                  e.currentTarget.value
-                                );
-                                setImage(e.target.files[0]);
-                              }}
-                              component={InputField}
-                              style={{ color: "black" }}
-                              label="Ảnh của sản phẩm"
-                              required
-                            />
-                          </FormGroup>
                         </div>
-
                         <button className="buy__btn" type="submit">
-                          Lưu
-                        </button>
-                        <button className="buy__btn" onClick={toggle}>
-                          Đóng
+                          Nhập hàng
                         </button>
                       </Form>
-                    );
-                  }}
-                </Formik>
-              </Col>
+                    )}
+                  </Formik>
+                </Col>
+              )}
             </Row>
           </Container>
         </ModalBody>

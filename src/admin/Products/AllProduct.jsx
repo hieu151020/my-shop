@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState } from "react";
 import "../../styles/all-products.css";
-import {  Row, Col } from "reactstrap";
+import { Row, Col } from "reactstrap";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -19,15 +19,26 @@ import { modalActions } from "../../redux/slices/modalSlice";
 import ModalConfirmDelete from "../../components/Modal/ModalConfirmDelete";
 import useToggleDialog from "../../custom-hooks/useToggleDialog";
 import ModalEditProduct from "./Modal/ModalEditProduct";
+import ModalManageManufacture from "./Modal/ModalManageManufacture";
+import useGetData from "../../custom-hooks/useGetData";
 
 function AllProduct(props) {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(7);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [isEdit, setEdit] = useState(false);
+  const { data: manufactureData, loadingManufacture } =
+    useGetData("listManufacture");
+
   const dispatch = useDispatch();
 
   const { open, toggle, shouldRender } = useToggleDialog();
+  const {
+    open: openManufacture,
+    toggle: toggleManufacture,
+    shouldRender: shouldRenderManufacture,
+  } = useToggleDialog();
   const {
     open: openEdit,
     toggle: toggleEdit,
@@ -40,6 +51,13 @@ function AllProduct(props) {
   };
 
   const handleEditProduct = (item) => {
+    setEdit(true);
+    toggleEdit();
+    dispatch(modalActions.getProduct(item));
+  };
+
+  const handleImportProduct = (item) => {
+    setEdit(false);
     toggleEdit();
     dispatch(modalActions.getProduct(item));
   };
@@ -51,12 +69,6 @@ function AllProduct(props) {
 
   useEffect(() => {
     const q = query(collection(db, "products"));
-    // const queryData = query(
-    //   collectionRef,
-    //   orderBy('price'),
-    //   limit(5),
-    //   startAfter((currentPage - 1) * 5),
-    // );
 
     const getData = onSnapshot(q, (snapshot) => {
       const newData = snapshot.docs.map((doc) => ({
@@ -103,39 +115,41 @@ function AllProduct(props) {
   };
 
   const renderPrevButton = () => {
-    return(
-      currentPage === 1 ? (
-        <li className="disabled">
-          <span>
-            <i class="ri-arrow-left-s-line"></i>
-          </span>
-        </li>
-      ) : (
-        <li>
-          <a className="d-flex align-items-center justify-content-center" onClick={handlePrevClick}>
-            <i class="ri-arrow-left-s-line"></i>
-          </a>
-        </li>
-      )
-    )
+    return currentPage === 1 ? (
+      <li className="disabled">
+        <span>
+          <i className="ri-arrow-left-s-line"></i>
+        </span>
+      </li>
+    ) : (
+      <li>
+        <a
+          className="d-flex align-items-center justify-content-center"
+          onClick={handlePrevClick}
+        >
+          <i className="ri-arrow-left-s-line"></i>
+        </a>
+      </li>
+    );
   };
 
   const renderNextButton = () => {
-    return(
-      currentPage === totalPages ? (
-        <li className="disabled">
-          <span>
-            <i class="ri-arrow-right-s-line"></i>
-          </span>
-        </li>
-      ) : (
-        <li>
-          <a className="d-flex align-items-center justify-content-center" onClick={handleNextClick}>
-            <i class="ri-arrow-right-s-line"></i>
-          </a>
-        </li>
-      )
-    )
+    return currentPage === totalPages ? (
+      <li className="disabled">
+        <span>
+          <i className="ri-arrow-right-s-line"></i>
+        </span>
+      </li>
+    ) : (
+      <li>
+        <a
+          className="d-flex align-items-center justify-content-center"
+          onClick={handleNextClick}
+        >
+          <i className="ri-arrow-right-s-line"></i>
+        </a>
+      </li>
+    );
   };
 
   return (
@@ -151,20 +165,38 @@ function AllProduct(props) {
               <li className="mb-2">Nữ</li>
               <li className="mb-2">Cặp đôi</li>
             </ul>
+            <ul>
+              {manufactureData.map((item, index) => (
+                <li key={index} className="mb-2">
+                  {item.manufactureName}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
         <Col lg="9">
           <Link to="/dashboard/all-products/add-products">
-            <button className="btn btn-primary mb-5">Thêm sản phẩm mới</button>
+            <button
+              className="btn btn-primary mb-5"
+              style={{ marginRight: "10px" }}
+            >
+              Thêm sản phẩm mới
+            </button>
           </Link>
+          <button className="btn btn-primary mb-5" onClick={toggleManufacture}>
+            Danh sách hãng sản xuất
+          </button>
           <table className="table">
             <thead>
               <tr>
+                <th>STT</th>
                 <th>Ảnh</th>
                 <th>Tên sản phẩm</th>
                 <th>Loại sản phẩm</th>
                 <th>Hãng sản xuất</th>
                 <th>Giá</th>
+                <th>Số lượng trong kho</th>
+                <th>Nhập</th>
                 <th>Sửa</th>
                 <th>Xóa</th>
               </tr>
@@ -173,12 +205,13 @@ function AllProduct(props) {
               {loading ? (
                 <h4 className="py-5 text-center fw-bold">Loading data....</h4>
               ) : (
-                currentItems.map((item) => {
+                currentItems.map((item, index) => {
                   let price = item.price;
                   price = +price;
                   return (
                     <>
                       <tr key={item.id}>
+                        <td>{index + 1}</td>
                         <td>
                           <img src={item.imgUrl} alt="" />
                         </td>
@@ -186,25 +219,46 @@ function AllProduct(props) {
                         <td>{item.category}</td>
                         <td>{item.manufacture}</td>
                         <td>{price.toLocaleString("vi-VN")} đ</td>
-                        <td>
+                        <td>{item.stockNumber}</td>
+                        <td
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="bottom"
+                          title="Nhập hàng"
+                        >
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => handleImportProduct(item)}
+                          >
+                            <i class="ri-download-line"></i>
+                          </button>
+                        </td>
+                        <td
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="bottom"
+                          title="Sửa"
+                        >
                           <button
                             className="btn btn-primary"
                             onClick={() => handleEditProduct(item)}
                           >
-                            Sửa
+                            <i class="ri-edit-line"></i>
                           </button>
                         </td>
-                        <td>
+                        <td
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="bottom"
+                          title="Xóa"
+                        >
                           <button
                             className="btn btn-danger"
                             onClick={() => {
                               showModalDeleteProduct(item);
                             }}
                           >
-                            Xóa
+                            <i class="ri-delete-bin-line"></i>
                           </button>
                         </td>
-                      </tr>  
+                      </tr>
                     </>
                   );
                 })
@@ -231,15 +285,23 @@ function AllProduct(props) {
           onSubmit={deleteProduct}
         />
       )}
+      {shouldRenderManufacture && (
+        <ModalManageManufacture
+          toggle={toggleManufacture}
+          open={openManufacture}
+          data={manufactureData}
+          loading={loadingManufacture}
+        />
+      )}
       {shouldRenderEdit && (
-                        <ModalEditProduct
-                          toggle={toggleEdit}
-                          open={openEdit}
-                          handleEditProduct={handleEditProduct}
-                          // content="sản phẩm"
-                          // onSubmit={deleteProduct}
-                        />
-                      )}
+        <ModalEditProduct
+          toggle={toggleEdit}
+          open={openEdit}
+          manufactureData={manufactureData}
+          handleEditProduct={handleEditProduct}
+          isEdit={isEdit}
+        />
+      )}
     </section>
   );
 }

@@ -13,7 +13,8 @@ import AddProduct from "../admin/Products/AddProduct";
 import Dashboard from "../admin/Dashboard";
 import Users from "../admin/Users";
 import baseUrl from "../contants/routeBaseUrl";
-import Orders from "../admin/Orders";
+import Order from "../pages/Order";
+import Orders from "../admin/Orders/Orders";
 
 const Routers = () => {
   const routes = [
@@ -40,6 +41,11 @@ const Routers = () => {
     {
       path: baseUrl.checkout,
       element: Checkout,
+      isPrivate: true,
+    },
+    {
+      path: baseUrl.order,
+      element: Order,
       isPrivate: true,
     },
     {

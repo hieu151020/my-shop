@@ -33,7 +33,7 @@ const Home = () => {
 
   useEffect(() => {
     const filterdTrendingProducts = products?.filter(
-      (item) => item.category === "chair"
+      (item) => item.category === "men"
     );
     const filterdBestSalesProducts = products?.filter(
       (item) => item.category === "sofa"

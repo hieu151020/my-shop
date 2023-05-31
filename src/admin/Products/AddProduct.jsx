@@ -11,23 +11,9 @@ import { collection, addDoc } from "firebase/firestore";
 import InputField from "../../components/Field/InputField";
 import TextAreaField from "../../components/Field/TextAreaField";
 import SelectField from "../../components/Field/SelectField";
-
-const listManufacture = [
-  {
-    name:"------------------------Choose Manufacture------------------------",
-    value:''
-  },
-  {
-    name: "Casio",
-    value: "casio",
-  },
-]
+import useGetData from "../../custom-hooks/useGetData";
 
 const listCategory = [
-  {
-    name:"------------------------Choose Category------------------------",
-    value:''
-  },
   {
     name: "Nam",
     value: "men",
@@ -44,6 +30,14 @@ const listCategory = [
 
 function AddProduct(props) {
   const [image, setImage] = useState(null);
+  const { data: manufactureData, loadingManufacture } = useGetData("listManufacture");
+
+  const listManufacture = manufactureData.map((item) => {
+    return {
+      name: item?.manufactureName,
+      value: item?.manufactureValue,
+    };
+  });
 
   const formikRef = useRef();
 
@@ -65,6 +59,7 @@ function AddProduct(props) {
 
     try {
       const docRef = collection(db, "products");
+      const createAt = new Date().getTime()
       const storageRef = ref(
         storage,
         `productImages/${Date.now() + image.name}`
@@ -84,6 +79,9 @@ function AddProduct(props) {
               category: category,
               manufacture:manufacture,
               price: price,
+              createAt:createAt,
+              stockNumber:0,
+              available:0,
               imgUrl: dowloadURL,
             });
           });

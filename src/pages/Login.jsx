@@ -31,10 +31,9 @@ const Login = () => {
       console.log(user);
       setLoading(false);
       toast.success("Loggin successful");
-      navigate("/checkout");
+      navigate("/");
     } catch (error) {
       setLoading(false);
-      console.log(error.message);
       switch (error.message) {
         case "Firebase: Error (auth/invalid-email).":
           toast.error("Email không hợp lệ ");

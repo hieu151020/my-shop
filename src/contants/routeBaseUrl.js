@@ -4,6 +4,7 @@ const baseUrl = {
   cart: "/cart",
   product: "shop/:id",
   checkout: "checkout",
+  order: "order",
   login: "login",
   signup: "signup",
   dashboard: "dashboard/main",

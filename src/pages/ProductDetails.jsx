@@ -2,46 +2,32 @@ import React, { useState, useRef, useEffect } from "react";
 import "../styles/product-details.css";
 import { Container, Row, Col } from "reactstrap";
 import { useParams } from "react-router-dom";
-import products from "../assets/data/products";
 import CommonSection from "../components/UI/CommonSection";
 import Helmet from "../components/Helmet/Helmet";
 import { motion } from "framer-motion";
 import ProductsList from "../components/UI/ProductsList";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { cartActions } from "../redux/slices/cartSlice";
 import { toast } from "react-toastify";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebase.config";
 import useGetData from "../custom-hooks/useGetData";
 
 const ProductDetails = () => {
-  // const [product, setProduct] = useState({});
   const [tab, setTab] = useState("desc");
   const reviewUser = useRef("");
   const reviewMsg = useRef("");
   const dispatch = useDispatch();
+  const product = useSelector((state) => state.modal.getProduct);
+
+  const [expanded, setExpanded] = useState(false);
+
+  const toggleExpanded = () => {
+    setExpanded(!expanded);
+  };
 
   const [rating, setRating] = useState(null);
   const { id } = useParams();
 
-  // const { data: products } = useGetData("products");
-  const product = products.find((item) => item.id === id);
-
-  const docRef = doc(db, "products", id);
-
-  // useEffect(() => {
-  //   const getProduct = async () => {
-  //     const docSnap = await getDoc(docRef);
-
-  //     if (docSnap.exists()) {
-  //       setProduct(docSnap.data());
-  //     } else {
-  //       console.log("No product!!");
-  //     }
-  //   };
-
-  //   getProduct();
-  // }, []);
+  const { data: products } = useGetData("products");
 
   const {
     imgUrl,
@@ -101,7 +87,7 @@ const ProductDetails = () => {
             </Col>
           </Row>
           <Row>
-            <Col lg="6">
+            <Col lg="6" className="product__img">
               <img src={imgUrl} alt="" />
             </Col>
             <Col lg="6">
@@ -129,18 +115,24 @@ const ProductDetails = () => {
                 </div>
 
                 <div className="d-flex align-items-center gap-5">
-                  <span className="product__price">${price}</span>
+                  <span className="product__price">
+                    {Number(price).toLocaleString("vi-VN")}đ
+                  </span>
                   <span>Category: {category.toUpperCase()}</span>
                 </div>
                 <p className="mt-3">{shortDesc}</p>
-
+                {product.available > 0 ? (
                 <motion.button
                   whileTap={{ scale: 1.1 }}
                   className="buy__btn"
                   onClick={addToCart}
                 >
-                  Add to Cart
-                </motion.button>
+                  Thêm vào giỏ hàng
+                </motion.button>):(
+                  <button className="btn btn-danger mt-5" disabled>
+                  Hết hàng
+                </button>
+                )}
               </div>
             </Col>
           </Row>
@@ -152,23 +144,28 @@ const ProductDetails = () => {
           <Row>
             <Col lg="12">
               <div className="tab__wrapper d-flex align-items-center gap-5">
-                <h6
+                <h5
                   className={`${tab === "desc" ? "active__tab" : ""}`}
                   onClick={() => setTab("desc")}
                 >
-                  Description
-                </h6>
-                <h6
+                  Mô tả sản phẩm
+                </h5>
+                <h5
                   className={`${tab === "rev" ? "active__tab" : ""}`}
                   onClick={() => setTab("rev")}
                 >
-                  {/* Review ({reviews.lenght}) */}
-                </h6>
+                  Review
+                </h5>
               </div>
 
               {tab === "desc" ? (
                 <div className="tab__content mt-5">
-                  <p>{description}</p>
+                  {expanded ? (
+                    <p>{description}</p>
+                  ) : (
+                    <p>{description.slice(0, 500)}</p>
+                  )}
+                    {description.length > 500 &&  (expanded ? <button className="btn__colapse" onClick={toggleExpanded}>Thu gọn</button> : <button className="btn__expand" onClick={toggleExpanded}>Xem thêm</button>)}
                 </div>
               ) : (
                 <div className="product__review mt-5">

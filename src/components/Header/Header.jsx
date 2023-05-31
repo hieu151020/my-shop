@@ -1,8 +1,8 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState, useMemo } from "react";
 import "./header.css";
 import { motion } from "framer-motion";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import { Container, Row } from "reactstrap";
+import { Container, Row, Tooltip } from "reactstrap";
 import { useSelector } from "react-redux";
 
 import logo from "../../assets/images/eco-logo.png";
@@ -11,6 +11,7 @@ import useAuth from "../../custom-hooks/useAuth";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase.config";
 import { toast } from "react-toastify";
+import useGetData from "../../custom-hooks/useGetData";
 
 const nav_links = [
   {
@@ -35,8 +36,11 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { currentUser } = useAuth();
+  const { data: orderData } = useGetData("orders");
 
-  const isAdmin = currentUser?.displayName === "admin";
+  const isAdmin =
+    currentUser?.displayName === "admin" &&
+    currentUser?.email === "admin@gmail.com";
 
   const stickyHeaderFunc = () => {
     window.addEventListener("scroll", () => {
@@ -50,6 +54,16 @@ const Header = () => {
       }
     });
   };
+
+  const orderList = useMemo(() => {
+    const filteredOrders = [];
+    orderData.forEach((item) => {
+      if (item.customerEmail === currentUser?.email) {
+        filteredOrders.push(item);
+      }
+    });
+    return filteredOrders;
+  }, [orderData, currentUser]);
 
   const logout = () => {
     signOut(auth)
@@ -118,12 +132,26 @@ const Header = () => {
 
             <div className="nav__icons">
               <span className="fav__icon">
-                <i className="ri-heart-line"></i>
-                <span className="badge">1</span>
+                <Link
+                  to="/order"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="bottom"
+                  title="Đơn hàng"
+                >
+                  <i className="ri-truck-line"></i>
+                  <span className="badge">
+                    {orderList?.length !== 0 && orderList?.length}
+                  </span>
+                </Link>
               </span>
               <span className="cart__icon" onClick={navigateToCart}>
                 <Link to="/cart">
-                  <i className="ri-shopping-bag-line"></i>
+                  <i
+                    className="ri-shopping-cart-line"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="bottom"
+                    title="Giỏ hàng"
+                  ></i>
                 </Link>
                 <span className="badge">{totalQuantity}</span>
               </span>
@@ -142,13 +170,11 @@ const Header = () => {
                   {currentUser ? (
                     <>
                       {!!isAdmin ? (
-                        <div className="d-flex align-items-center justify-content-center flex-column">
+                        <div className="d-flex align-items-center justify-content-center flex-column ">
                           <span onClick={logout}>Đăng xuất</span>
-                          <Link to="/dashboard/main">
-                            <span onClick={toggleProfileActions}>
-                              Dashboard
-                            </span>
-                          </Link>
+                          <span onClick={toggleProfileActions}>
+                            <Link to="/dashboard/main">Dashboard</Link>
+                          </span>
                         </div>
                       ) : (
                         <span onClick={logout}>Đăng xuất</span>
@@ -156,12 +182,12 @@ const Header = () => {
                     </>
                   ) : (
                     <div className="d-flex align-items-center justify-content-center flex-column">
-                      <Link to="/signup">
-                        <span onClick={toggleProfileActions}>Đăng kí</span>
-                      </Link>
-                      <Link to="/login">
-                        <span onClick={toggleProfileActions}>Đăng nhập</span>
-                      </Link>
+                      <span onClick={toggleProfileActions}>
+                        <Link to="/signup">Đăng kí</Link>
+                      </span>
+                      <span onClick={toggleProfileActions}>
+                        <Link to="/login">Đăng nhập</Link>
+                      </span>
                     </div>
                   )}
                 </div>
