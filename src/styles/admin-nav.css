@@ -29,12 +29,6 @@
     column-gap: 2rem;
 }
 
-.admin__nav-wrapper-top .search__box{
-    display: flex;
-    align-items: center;
-    justify-content: space-between; 
-}
-
 .admin__nav-top-right span i{
     font-size: 20px;
     color: whitesmoke;
@@ -43,8 +37,8 @@
 
 .admin__nav-wrapper-top .logo h3{
     text-align: center;
-    width: 200px;
-    font-size: 1.5rem;
+    width: 300px;
+    cursor: default;
     color: whitesmoke;
 
 }

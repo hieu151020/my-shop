@@ -20,7 +20,7 @@ const CartItem = ({
                 <img src={item.imgUrl} alt="" />
               </td>
               <td>{item.productName}</td>
-              <td>{item.price} đ</td>
+              <td>{item.price.toLocaleString("vi-VN")}đ</td>
               <td>
                 <i
                   className="ri-arrow-left-s-line p-2"

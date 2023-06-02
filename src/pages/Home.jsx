@@ -10,7 +10,8 @@ import { motion } from "framer-motion";
 import { Container, Row, Col } from "reactstrap";
 
 import heroImg from "../assets/images/hero-img.png";
-import counterImg from "../assets/images/counter-timer-img.png";
+import heroImg2 from "../assets/images/hero-img2.png";
+// import counterImg from "../assets/images/counter-timer-img.png";
 
 import { useState } from "react";
 import { useEffect } from "react";
@@ -28,18 +29,19 @@ const Home = () => {
   const [popularProducts, setPopularProducts] = useState([]);
 
   let { data: products, loading } = useGetData("products");
+  const { data: manufactureData } = useGetData("listManufacture");
 
   const year = new Date().getFullYear();
 
   useEffect(() => {
     const filterdTrendingProducts = products?.filter(
-      (item) => item.category === "men"
+      (item) => item.manufacture === "casio"
     );
     const filterdBestSalesProducts = products?.filter(
-      (item) => item.category === "sofa"
+      (item) => item.manufacture === "rolex"
     );
     const filterdMobileProducts = products?.filter(
-      (item) => item.category === "mobile"
+      (item) => item.manufacture === "orient"
     );
     const filterdWirelessProducts = products?.filter(
       (item) => item.category === "wireless"
@@ -78,6 +80,7 @@ const Home = () => {
             <Col lg="6" md="6">
               <div className="hero__img">
                 <img src={heroImg} alt="" />
+                <img src={heroImg2} alt="" className="hero__img2" />
               </div>
             </Col>
           </Row>
@@ -88,13 +91,13 @@ const Home = () => {
         <Container>
           <Row>
             <Col lg="12" className="text-center  mb-5">
-              <h2 className="section__title">Trending Products</h2>
+              <h2 className="section__title">Casio</h2>
             </Col>
 
             {loading ? (
               <h5 className="fw-bold">Loading......</h5>
             ) : (
-              <ProductsList data={trendingProducts} />
+              <ProductsList data={trendingProducts.slice(0,8)} />
             )}
           </Row>
         </Container>
@@ -126,7 +129,7 @@ const Home = () => {
               </motion.button>
             </Col>
             <Col lg="6" md="12" className="text-end counter__img">
-              <img src={counterImg} alt="" />
+              {/* <img src={counterImg} alt="" /> */}
             </Col>
           </Row>
         </Container>

@@ -49,7 +49,7 @@ function SelectField(props) {
         style={{ display: "block" }}
         {...otherProps}
       >
-        <option value={""}></option>
+          <option value="" disabled selected hidden></option>
         {items}
       </select>
       {isShowErrMessage ? (

@@ -28,6 +28,8 @@ function AllProduct(props) {
   const [itemsPerPage, setItemsPerPage] = useState(7);
   const [loading, setLoading] = useState(true);
   const [isEdit, setEdit] = useState(false);
+  const [isManufacture, setManufacture] = useState(false);
+  const { data: categoryData, loadingCategory } = useGetData("listCategory");
   const { data: manufactureData, loadingManufacture } =
     useGetData("listManufacture");
 
@@ -48,6 +50,16 @@ function AllProduct(props) {
   const showModalDeleteProduct = async (item) => {
     toggle();
     dispatch(modalActions.getProduct(item));
+  };
+
+  const handleManufacture = () => {
+    setManufacture(true);
+    toggleManufacture();
+  };
+
+  const handleCategory = () => {
+    setManufacture(false);
+    toggleManufacture();
   };
 
   const handleEditProduct = (item) => {
@@ -160,12 +172,12 @@ function AllProduct(props) {
             <h3 className="pb-3 mb-4 mt-3 title__left-nav">
               Danh mục sản phẩm
             </h3>
-            <ul className="filter__product__list">
+            {/* <ul className="filter__product__list">
               <li className="mb-2 ">Nam</li>
               <li className="mb-2">Nữ</li>
               <li className="mb-2">Cặp đôi</li>
-            </ul>
-            <ul>
+            </ul> */}
+            <ul className="filter__product__list">
               {manufactureData.map((item, index) => (
                 <li key={index} className="mb-2">
                   {item.manufactureName}
@@ -183,8 +195,15 @@ function AllProduct(props) {
               Thêm sản phẩm mới
             </button>
           </Link>
-          <button className="btn btn-primary mb-5" onClick={toggleManufacture}>
+          <button
+            className="btn btn-primary mb-5 "
+            style={{ marginRight: "10px" }}
+            onClick={handleManufacture}
+          >
             Danh sách hãng sản xuất
+          </button>
+          <button className="btn btn-primary mb-5" onClick={handleCategory}>
+            Danh sách loại sản phẩm
           </button>
           <table className="table">
             <thead>
@@ -289,8 +308,9 @@ function AllProduct(props) {
         <ModalManageManufacture
           toggle={toggleManufacture}
           open={openManufacture}
-          data={manufactureData}
-          loading={loadingManufacture}
+          data={isManufacture ? manufactureData : categoryData}
+          loading={isManufacture ? loadingManufacture : loadingCategory}
+          isManufacture={isManufacture}
         />
       )}
       {shouldRenderEdit && (
@@ -298,6 +318,7 @@ function AllProduct(props) {
           toggle={toggleEdit}
           open={openEdit}
           manufactureData={manufactureData}
+          categoryData={categoryData}
           handleEditProduct={handleEditProduct}
           isEdit={isEdit}
         />

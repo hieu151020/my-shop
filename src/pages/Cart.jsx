@@ -79,8 +79,8 @@ const Cart = () => {
               <Col lg="3">
                 <div>
                   <h6 className="d-flex align-items-center justify-content-between">
-                    Tổng giá trị đơn hàng
-                    <span className="fs-4 fw-bold">{totalAmount} đ</span>
+                    Tổng đơn hàng
+                    <span className="fs-4 fw-bold total__cost">{totalAmount.toLocaleString("vi-VN")}đ</span>
                   </h6>
                 </div>
                 <div>

@@ -58,7 +58,6 @@ const Checkout = () => {
           isCancle: false,
         });
 
-        // clearForm();
         toast.success("Bạn đã đặt hàng thành công");
         navigate("/order");
       } catch (error) {

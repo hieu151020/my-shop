@@ -79,13 +79,13 @@ const ProductDetails = () => {
 
       <section>
         <Container>
-          <Row>
+          {/* <Row>
             <Col>
               <span className="btn__back">
                 <i className="ri-arrow-drop-left-line"></i>
               </span>
             </Col>
-          </Row>
+          </Row> */}
           <Row>
             <Col lg="6" className="product__img">
               <img src={imgUrl} alt="" />
@@ -118,7 +118,7 @@ const ProductDetails = () => {
                   <span className="product__price">
                     {Number(price).toLocaleString("vi-VN")}đ
                   </span>
-                  <span>Category: {category.toUpperCase()}</span>
+                  <span>Category: {category?.toUpperCase()}</span>
                 </div>
                 <p className="mt-3">{shortDesc}</p>
                 {product.available > 0 ? (
@@ -163,9 +163,9 @@ const ProductDetails = () => {
                   {expanded ? (
                     <p>{description}</p>
                   ) : (
-                    <p>{description.slice(0, 500)}</p>
+                    <p>{description?.slice(0, 500)}</p>
                   )}
-                    {description.length > 500 &&  (expanded ? <button className="btn__colapse" onClick={toggleExpanded}>Thu gọn</button> : <button className="btn__expand" onClick={toggleExpanded}>Xem thêm</button>)}
+                    {description?.length > 500 &&  (expanded ? <button className="btn__colapse" onClick={toggleExpanded}>Thu gọn</button> : <button className="btn__expand" onClick={toggleExpanded}>Xem thêm</button>)}
                 </div>
               ) : (
                 <div className="product__review mt-5">

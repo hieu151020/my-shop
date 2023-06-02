@@ -1,67 +1,132 @@
-import React from "react";
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import React, { useEffect } from "react";
 import "../styles/shop.css";
 
 import CommonSection from "../components/UI/CommonSection";
 import Helmet from "../components/Helmet/Helmet";
 import { Container, Row, Col } from "reactstrap";
 
-import products from "../assets/data/products";
 import { useState } from "react";
 import ProductsList from "../components/UI/ProductsList";
+import useGetData from "../custom-hooks/useGetData";
 
 const Shop = () => {
-  const [productData, setProductsData] = useState(products);
+  const { data: products, loading } = useGetData("products");
+  const { data: manufactureData } = useGetData("listManufacture");
+  const [productData, setProductsData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(4);
+  const [searchValue, setSearchValue] = useState("");
+
+  useEffect(() => {
+    setProductsData(products);
+  }, [products]);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = productData.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handlePageClick = (event) => {
+    setCurrentPage(Number(event.target.id));
+    // setProductsData(productData.slice((currentPage - 1) * 7, currentPage * 7))
+  };
+
+  const handlePrevClick = () => {
+    setCurrentPage(currentPage - 1);
+  };
+
+  const handleNextClick = () => {
+    setCurrentPage(currentPage + 1);
+  };
+
+  const totalPages = Math.ceil(productData?.length / itemsPerPage);
+
+  const renderPageNumbers = () => {
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(
+        <li key={i} className={i === currentPage ? "active" : ""}>
+          <a onClick={handlePageClick} id={i}>
+            {i}
+          </a>
+        </li>
+      );
+    }
+    return pageNumbers;
+  };
+
+  const renderPrevButton = () => {
+    return currentPage === 1 ? (
+      <li className="disabled">
+        <span>
+          <i className="ri-arrow-left-s-line"></i>
+        </span>
+      </li>
+    ) : (
+      <li>
+        <a
+          className="d-flex align-items-center justify-content-center"
+          onClick={handlePrevClick}
+        >
+          <i className="ri-arrow-left-s-line"></i>
+        </a>
+      </li>
+    );
+  };
+
+  const renderNextButton = () => {
+    return currentPage === totalPages ? (
+      <li className="disabled">
+        <span>
+          <i className="ri-arrow-right-s-line"></i>
+        </span>
+      </li>
+    ) : (
+      <li>
+        <a
+          className="d-flex align-items-center justify-content-center"
+          onClick={handleNextClick}
+        >
+          <i className="ri-arrow-right-s-line"></i>
+        </a>
+      </li>
+    );
+  };
   // ham phan loai sp
   const handleFilter = (e) => {
     const filterValue = e.target.value;
-    if (filterValue === "sofa") {
-      const filteredProducts = products.filter(
-        (item) => item.category === "sofa"
-      );
-      setProductsData(filteredProducts);
-    }
     if (filterValue === "all") {
       const filteredProducts = products;
       setProductsData(filteredProducts);
-    }
-
-    if (filterValue === "watch") {
-      const filteredProducts = products.filter(
-        (item) => item.category === "watch"
+    } else {
+      const dataItem = manufactureData.find(
+        (item) => item.manufactureValue === filterValue
       );
-      setProductsData(filteredProducts);
-    }
-
-    if (filterValue === "mobile") {
       const filteredProducts = products.filter(
-        (item) => item.category === "mobile"
-      );
-      setProductsData(filteredProducts);
-    }
-
-    if (filterValue === "chair") {
-      const filteredProducts = products.filter(
-        (item) => item.category === "chair"
-      );
-      setProductsData(filteredProducts);
-    }
-    if (filterValue === "wireless") {
-      const filteredProducts = products.filter(
-        (item) => item.category === "wireless"
+        (product) => product.manufacture === dataItem.manufactureValue
       );
       setProductsData(filteredProducts);
     }
   };
 
-  const handleSearch = (e) => {
-    setTimeout(() => {
-      const searchTerm = e.target.value;
+  const handleSort=()=>{
+    
+  }
+
+  const handleSearch = () => {
+    if (searchValue === "") {
+      const filteredProducts = products;
+      setProductsData(filteredProducts);
+    } else {
       const searchedProducts = products.filter((item) =>
-        item.productName.toLowerCase().includes(searchTerm.toLowerCase())
+        item.productName.toLowerCase().includes(searchValue?.trim().toLowerCase())
       );
-      setProductsData(searchedProducts);
-    }, 2000);
+      setProductsData(
+        searchedProducts
+      );
+    }
   };
+
   return (
     <Helmet title="Shop">
       <CommonSection title="Products" />
@@ -72,22 +137,26 @@ const Shop = () => {
             <Col lg="3" md="6">
               <div className="filter__widget">
                 <select onChange={handleFilter}>
-                  <option>Filter By Category</option>
-                  <option value="all">All</option>
-                  <option value="sofa">Sofa</option>
-                  <option value="mobile">Mobile</option>
-                  <option value="chair">Chair</option>
-                  <option value="watch">Watch</option>
-                  <option value="wireless">Wireless</option>
+                  <option value="all">Tất cả</option>
+                  {manufactureData.map((item, index) => {
+                    return (
+                      <option key={index} value={item.manufactureValue}>
+                        {item.manufactureName}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
             </Col>
             <Col lg="2" md="6" className="text-end">
               <div className="filter__widget">
-                <select>
-                  <option>Sort By</option>
-                  <option value="ascending">Ascending</option>
-                  <option value="descending">Descending</option>
+                <select onChange={handleSort}>
+                  <option>Khoảng giá</option>
+                  <option value="0-2000000">0đ - 2.000.000đ</option>
+                  <option value="2000-6000">2.000.000đ - 6.000.000đ</option>
+                  <option value="6000-10000">6.000.000đ - 10.000.000đ</option>
+                  <option value="10000-20000">10.000.000đ - 20.000.000đ</option>
+                  <option value="20000-40000">20.000.000đ - 40.000.000đ</option>
                 </select>
               </div>
             </Col>
@@ -96,10 +165,12 @@ const Shop = () => {
                 <input
                   type="text"
                   placeholder="Search......."
-                  onChange={handleSearch}
+                  onChange={(e) =>
+                    setTimeout(() => setSearchValue(e.target.value), 1000)
+                  }
                 />
                 <span>
-                  <i className="ri-search-line"></i>
+                  <i className="ri-search-line" onClick={handleSearch}></i>
                 </span>
               </div>
             </Col>
@@ -109,13 +180,34 @@ const Shop = () => {
 
       <section className="pt-0">
         <Container>
-          <Row>
-            {productData.length === 0 ? (
-              <h1 className="text-center">No product are found!!</h1>
-            ) : (
-              <ProductsList data={productData} />
-            )}
-          </Row>
+          {loading ? (
+            // <h5>Loading...</h5>
+            <div className="loading-overlay">
+              <div className="loading-spinner" />
+            </div>
+          ) : (
+            <Row>
+              {productData.length === 0 ? (
+                <h1 className="text-center">No product are found!!</h1>
+              ) : (
+                <>
+                  <ProductsList
+                    data={productData !== products ? productData : currentItems}
+                  />
+                  <div>
+                    <ul
+                      id="page-numbers"
+                      className="d-flex align-items-center justify-content-center mt-5 page__numbers"
+                    >
+                      {renderPrevButton()}
+                      {renderPageNumbers()}
+                      {renderNextButton()}
+                    </ul>
+                  </div>
+                </>
+              )}
+            </Row>
+          )}
         </Container>
       </section>
     </Helmet>

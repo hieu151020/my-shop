@@ -77,11 +77,6 @@ function Orders(props) {
             stockNumber: docData.stockNumber - pro.quantity,
          });
         }
-        // const collectionProductRef = collection(db, "products");
-        // const docProductRef = doc(collectionProductRef, pro.id);
-        // await updateDoc(docProductRef, {
-        //   stockNumber: pro.stockNumber - pro.quantity,
-        // });
       });
       toast.success("Order delevery");
     } catch (error) {
@@ -101,11 +96,11 @@ function Orders(props) {
               <table className="table">
                 <thead>
                   <tr>
+                    <th>Mã đơn hàng</th>
                     <th>Ngày tạo</th>
                     <th>Email đặt hàng</th>
                     <th>Sản phẩm</th>
                     <th>Số lượng</th>
-                    <th>Giá</th>
                     <th>Thành tiền</th>
                     <th>Địa chỉ giao hàng</th>
                   </tr>
@@ -118,6 +113,7 @@ function Orders(props) {
                   ) : (
                     orderData.map((item) => (
                       <tr key={item.id}>
+                        <td>{item.id}</td>
                         <td>{item.checkoutDate}</td>
                         <td>{item.customerEmail}</td>
                         <td>
@@ -130,13 +126,13 @@ function Orders(props) {
                             <div>{i.quantity}</div>
                           ))}
                         </td>
-                        <td>
+                        {/* <td>
                           {item.item.map((i) => (
                             <div>
                               {Number(i.price).toLocaleString("vi-VN")}đ
                             </div>
                           ))}
-                        </td>
+                        </td> */}
                         <td>{item.totalAmount.toLocaleString("vi-VN")}đ</td>
                         <td>{item.customerAddress}</td>
                         <td

@@ -29,32 +29,35 @@ function AdminNav(props) {
     <>
       <header className="admin__header">
         <div className="admin__nav-top">
-            <div className="admin__nav-wrapper-top">
-              <div className="logo">
-                <span>
-                  <Link to={"/"}>
-                    <h3>Admin Dashboard</h3>
-                  </Link>
-                </span>
-              </div>
-              <div className="search__box">
-                <input type="text" placeholder="Search....." />
-                <span>
-                  <i className="ri-search-line"></i>
-                </span>
-              </div>
-              <div className="admin__nav-top-right">
-                <span className="noti__admin">
-                  <i className="ri-notification-3-line"></i>
+          <div className="admin__nav-wrapper-top">
+            <div className="logo">
+              <span>
+                <h3>Admin Dashboard</h3>
+              </span>
+            </div>
+            <div className="admin__nav-top-right">
+              <span className="noti__admin">
+                <i className="ri-notification-3-line"></i>
                 <span className="badge__admin">1</span>
-                </span>
-                <span className="mail__admin">
+              </span>
+              <span className="mail__admin">
                 <i className="ri-mail-line"></i>
                 <span className="badge__admin">1</span>
+              </span>
+              <Link to={"/"}>
+                <span>
+                  <i class="ri-home-2-line"></i>
                 </span>
+              </Link>
+              <span style={{ flexDirection: "column" }}>
                 <img src={currentUser && currentUser.photoURL} alt="" />
-              </div>
+                <span style={{ color: "whitesmoke", marginLeft: "10px" }}>
+                  {currentUser.displayName}
+                </span>
+              </span>
+              <button className="btn btn-danger">Đăng xuất</button>
             </div>
+          </div>
         </div>
       </header>
       <section className="admin__menu p-0">
@@ -64,9 +67,7 @@ function AdminNav(props) {
               <ul className="admin__menu-list">
                 {admin__nav.map((item, index) => (
                   <li className="admin__menu-item" key={index}>
-                    <NavLink to={item.path} >
-                      {item.display}
-                    </NavLink>
+                    <NavLink to={item.path}>{item.display}</NavLink>
                   </li>
                 ))}
               </ul>

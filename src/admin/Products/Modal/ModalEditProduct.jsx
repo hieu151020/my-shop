@@ -21,36 +21,22 @@ import SelectField from "../../../components/Field/SelectField";
 import { useSelector } from "react-redux";
 import { db, storage } from "../../../firebase.config";
 
-const listCategory = [
-  {
-    name: "---------------Choose Category------------------------",
-    value: "",
-  },
-  {
-    name: "Nam",
-    value: "men",
-  },
-  {
-    name: "Nữ",
-    value: "woman",
-  },
-  {
-    name: "Cặp đôi",
-    value: "wireless",
-  },
-];
-
-const ModalEditProduct = ({ open, toggle, manufactureData, isEdit }) => {
+const ModalEditProduct = ({ open, toggle, manufactureData,categoryData, isEdit }) => {
   const [image, setImage] = useState(null);
   const item = useSelector((state) => state.modal.getProduct);
   const formikRef = useRef();
-
-  console.log(item);
 
   const listManufacture = manufactureData.map((item) => {
     return {
       name: item?.manufactureName,
       value: item?.manufactureValue,
+    };
+  });
+
+  const listCategory = manufactureData.map((item) => {
+    return {
+      name: item?.categoryName,
+      value: item?.categoryValue,
     };
   });
 
@@ -63,32 +49,44 @@ const ModalEditProduct = ({ open, toggle, manufactureData, isEdit }) => {
       price,
       manufacture,
     } = values;
+
     try {
       const collectionRef = collection(db, "products");
       const docRef = doc(collectionRef, item.id);
-      const storageRef = ref(
-        storage,
-        `productImages/${Date.now() + image.name}`
-      );
-      const uploadTask = uploadBytesResumable(storageRef, image);
-      uploadTask.on(
-        () => {
-          toast.error("Images didn't uploaded!!!");
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then(async (dowloadURL) => {
-            await updateDoc(docRef, {
-              productName: productName,
-              shortDesc: shortDesc,
-              description: description,
-              category: category,
-              manufacture: manufacture,
-              price: price,
-              imgUrl: dowloadURL,
+      if (image) {
+        const storageRef = ref(
+          storage,
+          `productImages/${Date.now() + image.name}`
+        );
+        const uploadTask = uploadBytesResumable(storageRef, image);
+        uploadTask.on(
+          () => {
+            toast.error("Images didn't uploaded!!!");
+          },
+          () => {
+            getDownloadURL(uploadTask.snapshot.ref).then(async (dowloadURL) => {
+              await updateDoc(docRef, {
+                productName: productName,
+                shortDesc: shortDesc,
+                description: description,
+                category: category,
+                manufacture: manufacture,
+                price: price,
+                imgUrl: dowloadURL,
+              });
             });
-          });
-        }
-      );
+          }
+        );
+      } else {
+        updateDoc(docRef, {
+          productName: productName,
+          shortDesc: shortDesc,
+          description: description,
+          category: category,
+          manufacture: manufacture,
+          price: price,
+        });
+      }
       setTimeout(() => {
         toggle();
         toast.success("Edit product successful");
@@ -141,7 +139,7 @@ const ModalEditProduct = ({ open, toggle, manufactureData, isEdit }) => {
     price: Yup.number("Trường này phải là số").required(
       "Trường này là bắt buộc"
     ),
-    imageFormik: Yup.string().required("Trường này là bắt buộc"),
+    // imageFormik: Yup.string().required("Trường này là bắt buộc"),
   });
 
   return (
@@ -178,7 +176,6 @@ const ModalEditProduct = ({ open, toggle, manufactureData, isEdit }) => {
                               component={InputField}
                               label="Tên sản phẩm"
                               placeholder="Nhập tên sản phẩm"
-                              required
                             />
                           </FormGroup>
                           <FormGroup className="form__group">
@@ -188,7 +185,6 @@ const ModalEditProduct = ({ open, toggle, manufactureData, isEdit }) => {
                               rows="2"
                               label="Mô tả ngắn"
                               placeholder="Viết mô tả"
-                              required
                             />
                           </FormGroup>
                           <FormGroup className="form__group">
@@ -198,7 +194,6 @@ const ModalEditProduct = ({ open, toggle, manufactureData, isEdit }) => {
                               rows="6"
                               label="Chi tiết sản phẩm"
                               placeholder="Mô tả chi tiết"
-                              required
                             />
                           </FormGroup>
                           <div className="d-flex align-items-center justify-content-between gap-5">
@@ -209,7 +204,6 @@ const ModalEditProduct = ({ open, toggle, manufactureData, isEdit }) => {
                                 component={SelectField}
                                 options={listCategory}
                                 label="Loại sản phẩm"
-                                required
                               />
                             </FormGroup>
                             <FormGroup className="form__group w-50">
@@ -219,7 +213,6 @@ const ModalEditProduct = ({ open, toggle, manufactureData, isEdit }) => {
                                 component={SelectField}
                                 options={listManufacture}
                                 label="Hãng sản xuất"
-                                required
                               />
                             </FormGroup>
                           </div>
@@ -230,7 +223,6 @@ const ModalEditProduct = ({ open, toggle, manufactureData, isEdit }) => {
                                 component={InputField}
                                 label="Giá sản phẩm"
                                 placeholder="Nhập giá sản phẩm"
-                                required
                               />
                             </FormGroup>
                             <FormGroup className="form__group w-50">
@@ -247,7 +239,6 @@ const ModalEditProduct = ({ open, toggle, manufactureData, isEdit }) => {
                                 component={InputField}
                                 style={{ color: "black" }}
                                 label="Ảnh của sản phẩm"
-                                required
                               />
                             </FormGroup>
                           </div>
@@ -291,8 +282,8 @@ const ModalEditProduct = ({ open, toggle, manufactureData, isEdit }) => {
                             <Field
                               name="newStockNumber"
                               component={InputField}
-                              label="Giá sản phẩm"
-                              placeholder="Nhập giá sản phẩm"
+                              label="Nhập sản phẩm"
+                              placeholder="Nhập số sản phẩm"
                               required
                             />
                           </FormGroup>

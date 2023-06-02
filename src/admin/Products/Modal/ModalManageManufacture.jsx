@@ -26,8 +26,14 @@ import ModalConfirmDelete from "../../../components/Modal/ModalConfirmDelete";
 import { modalActions } from "../../../redux/slices/modalSlice";
 import { useDispatch } from "react-redux";
 
-function ModalManageManufacture({ open, toggle, data, loading }) {
-  const [listManufacture, setListManufacture] = useState([]);
+function ModalManageManufacture({
+  open,
+  toggle,
+  data,
+  loading,
+  isManufacture,
+}) {
+  const [listData, setListData] = useState([]);
   const {
     open: openDelete,
     toggle: toggleDelete,
@@ -37,7 +43,7 @@ function ModalManageManufacture({ open, toggle, data, loading }) {
   const formikRef = useRef();
 
   useEffect(() => {
-    setListManufacture(data);
+    setListData(data);
   }, [data]);
 
   const showModalDeleteProduct = async (item) => {
@@ -46,23 +52,39 @@ function ModalManageManufacture({ open, toggle, data, loading }) {
   };
 
   const deleteProduct = (id) => {
-    deleteDoc(doc(db, "listManufacture", id));
+    if (isManufacture) {
+      deleteDoc(doc(db, "listManufacture", id));
+    } else {
+      deleteDoc(doc(db, "listCategory", id));
+    }
     toast.success("Delete success!!");
   };
 
   const addManufacture = (values) => {
-    let manufactureValue = values.manufactureName;
+    let dataValue = values.dataName;
+    console.log(dataValue);
     const createAt = new Date().getTime();
-    manufactureValue = manufactureValue.replace(/\s/g, "").toLowerCase();
+    dataValue = dataValue.replace(/\s/g, "").toLowerCase();
     try {
-      const docRef = collection(db, "listManufacture");
-      addDoc(docRef, {
-        manufactureName: values.manufactureName,
-        manufactureValue: manufactureValue,
-        createAt: createAt,
-      });
-      formikRef.current.setFieldValue("manufactureName", "");
-      setListManufacture(...listManufacture, { values });
+      if (isManufacture) {
+        const docRef = collection(db, "listManufacture");
+
+        addDoc(docRef, {
+          manufactureName: values.dataName,
+          manufactureValue: dataValue,
+          createAt: createAt,
+        });
+      } else {
+        const docRef = collection(db, "listCategory");
+
+        addDoc(docRef, {
+          categoryName: values.dataName,
+          categoryValue: dataValue,
+          createAt: createAt,
+        });
+      }
+      formikRef.current.setFieldValue("dataName", "");
+      setListData(...listData, { values });
       toast.success("Add manufacture successful");
     } catch (error) {
       toast.error(error);
@@ -82,18 +104,18 @@ function ModalManageManufacture({ open, toggle, data, loading }) {
         toggle={toggle}
       >
         <ModalHeader toggle={toggle} close={closeBtn}>
-          Danh sách hãng sản xuất
+          {isManufacture
+            ? "Danh sách hãng sản xuất"
+            : "Danh sách loại sản phẩm"}
         </ModalHeader>
         <ModalBody toggle={toggle} close={closeBtn}>
           <Container>
             <Row>
               <Col lg="12">
                 <Formik
-                  initialValues={{ manufactureName: "" }}
+                  initialValues={{ dataName: "" }}
                   validationSchema={Yup.object().shape({
-                    manufactureName: Yup.string().required(
-                      "Trường này là bắt buộc"
-                    ),
+                    dataName: Yup.string().required("Trường này là bắt buộc"),
                   })}
                   innerRef={formikRef}
                   onSubmit={(values) => addManufacture(values)}
@@ -103,10 +125,18 @@ function ModalManageManufacture({ open, toggle, data, loading }) {
                       <Form>
                         <FormGroup className="d-flex align-items-center justify-content-left  form__group">
                           <Field
-                            name="manufactureName"
+                            name="dataName"
                             component={InputField}
-                            label="Tên hãng sản xuất"
-                            placeholder="Nhập tên hãng sản xuất"
+                            label={
+                              isManufacture
+                                ? "Tên hãng sản xuất"
+                                : "Tên loại sản phẩm"
+                            }
+                            placeholder={
+                              isManufacture
+                                ? "Nhập tên hãng sản xuất"
+                                : "Nhập tên loại sản phẩm"
+                            }
                             required
                           />
                           <button
@@ -126,7 +156,11 @@ function ModalManageManufacture({ open, toggle, data, loading }) {
                     <thead>
                       <tr>
                         <th>STT</th>
-                        <th>Tên hãng sản phẩm</th>
+                        {isManufacture ? (
+                          <th>Tên hãng sản phẩm</th>
+                        ) : (
+                          <th>Tên loại sản phẩm</th>
+                        )}
                         <th>Sửa</th>
                         <th>Xóa</th>
                       </tr>
@@ -142,7 +176,11 @@ function ModalManageManufacture({ open, toggle, data, loading }) {
                             <>
                               <tr key={item.id}>
                                 <td>{index + 1}</td>
-                                <td>{item.manufactureName}</td>
+                                {isManufacture ? (
+                                  <td>{item.manufactureName}</td>
+                                ) : (
+                                  <td>{item.categoryName}</td>
+                                )}
                                 <td>
                                   <button
                                     className="btn btn-primary"
