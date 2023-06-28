@@ -32,7 +32,7 @@ const Footer = () => {
                 </ListGroupItem>
 
                 <ListGroupItem className="ps-0 border-0">
-                  <Link to="#">Rolex</Link>
+                  <Link to="#">Apple</Link>
                 </ListGroupItem>
 
                 <ListGroupItem className="ps-0 border-0">

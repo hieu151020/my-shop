@@ -27,7 +27,7 @@ const cartSlice = createSlice({
           quantity: 1,
           totalPrice: newItem.price,
           itemAvailable:newItem.itemAvailable,
-          stockNumber:newItem.stockNumber
+          // stockNumber:newItem.stockNumber
         });
       } else {
         existingItem.quantity++;
@@ -60,7 +60,7 @@ const cartSlice = createSlice({
       const id = action.payload;
       const existingItem = state.cartItems.find((item) => item.id === id);
 
-      if (existingItem) {
+      if (existingItem && existingItem.quantity < existingItem.itemAvailable ) {
         existingItem.quantity += 1;
         state.totalQuantity++;
       }
@@ -82,6 +82,11 @@ const cartSlice = createSlice({
         (total, item) => total + Number(item.price) * Number(item.quantity),
         0
       );
+    },
+    clearCard: (state, action) => {
+      state.cartItems = []
+      state.totalAmount = 0
+      state.totalQuantity = 0
     },
   },
 });

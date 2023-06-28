@@ -1,9 +1,10 @@
 .product__item {
   margin-bottom: 24px;
-  height: 350px;
+  height: 370px;
   position: relative;
   cursor: pointer;
   box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
+  border-radius: 20px;
 }
 
 .product__img {
@@ -18,14 +19,15 @@
   height: 200px;
 }
 
-.product__info h3 a {
-  font-size: 1.1rem;
+.product__info .product__name {
+  height: 40px;
+  font-size: 1.0rem;
   color: var(--primary-color);
   font-weight: 600;
-  margin-top: 15px;
+  margin-top: 10px;
 }
 
-.product__info a:hover {
+.product__item a:hover {
   color: inherit;
 }
 

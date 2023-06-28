@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+
 
 const CartItem = ({
   cartItems,
@@ -20,25 +20,34 @@ const CartItem = ({
                 <img src={item.imgUrl} alt="" />
               </td>
               <td>{item.productName}</td>
-              <td>{item.price.toLocaleString("vi-VN")}đ</td>
+              <td>{Number(item.price).toLocaleString("vi-VN")}đ</td>
               <td>
                 <i
-                  className="ri-arrow-left-s-line p-2"
+                  className="ri-subtract-line p-2 arrow"
                   onClick={() => HandleReduceQuanty(item.id)}
                 ></i>
                 {item.quantity}
+                
                 <i
-                  className="ri-arrow-right-s-line p-2"
+                  className="ri-add-line p-2 arrow"
                   onClick={() => HandleIncreaseQuanty(item.id)}
                 ></i>
               </td>
               <td>
-                <motion.i
+              <button
+                  className="btn-danger-admin"
+                  onClick={() => {
+                    handleShowModalDeleteProduct(item)
+                  }}
+                >
+                  <i className="ri-delete-bin-line"></i>
+                </button>
+                {/* <motion.i
                   whileTap={{ scale: 1.2 }}
                   className="ri-delete-bin-line"
                   style={{ color: "red", fontSize: "20px" }}
                   onClick={() => handleShowModalDeleteProduct(item)}
-                ></motion.i>
+                ></motion.i> */}
               </td>
             </tr>
           )

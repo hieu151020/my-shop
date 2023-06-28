@@ -7,12 +7,14 @@ import Helmet from "../components/Helmet/Helmet";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase.config";
 import { toast } from "react-toastify";
+import { useAuthen } from "../userContext/AuthenticationProvider";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const {  login } = useAuthen();
 
   const navigate = useNavigate();
 
@@ -29,6 +31,7 @@ const Login = () => {
 
       const user = userCredential.user;
       console.log(user);
+      login(user.email)
       setLoading(false);
       toast.success("Loggin successful");
       navigate("/");
@@ -36,16 +39,16 @@ const Login = () => {
       setLoading(false);
       switch (error.message) {
         case "Firebase: Error (auth/invalid-email).":
-          toast.error("Email không hợp lệ ");
+          toast.error("Invalid email");
           break;
         case "Firebase: Error (auth/user-not-found).":
-          toast.error("Email không tồn tại");
+          toast.error("Email doesn't exist");
           break;
         case "Firebase: Error (auth/wrong-password).":
-          toast.error("Sai mật khẩu ");
+          toast.error("Wrong password");
           break;
         default:
-          console.log("Lỗi");
+          console.log("Error");
       }
     }
   };
@@ -62,9 +65,9 @@ const Login = () => {
         <Container>
           <Row>
             {loading ? (
-              <Col lg="12" className="text-center">
-                <h5 className="fw-bold">Loading.....</h5>
-              </Col>
+              <div className="loading-overlay">
+              <div className="loading-spinner" />
+            </div>
             ) : (
               <Col lg="6" className="m-auto text-center">
                 <h3 className="fw-bold fs-4 mb-4">Đăng nhập</h3>

@@ -5,6 +5,7 @@ function InputField(props) {
     type,
     label,
     field,
+    className,
     form,
     required,
     placeholder,
@@ -22,7 +23,7 @@ function InputField(props) {
 
   //! Render
   return (
-    <div style={{ height: "95px" }}>
+    <div style={{ height: "95px" }} className="input-wrapper">
       {!!label && (
         <label
           className={"d-flex mb-2"}
@@ -37,6 +38,7 @@ function InputField(props) {
         </label>
       )}
       <input
+      className={className}
         onChange={props?.onChange || onChange}
         onBlur={props?.onBlur || onBlur}
         label={label}

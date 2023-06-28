@@ -85,6 +85,19 @@ section{
   border: none;
 }
 
+thead{
+  background-color: #f4f7f8;
+  border-radius: 20px;
+}
+
+thead tr:first-child{
+  background-color: #f4f7f8;
+}
+
+tr:hover{
+background-color:rgba(249, 252, 253, 1) ;
+}
+
 @media only screen and (max-width:768px) {
   section{
       padding: 40px 0px;

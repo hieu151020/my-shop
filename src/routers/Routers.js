@@ -41,12 +41,13 @@ const Routers = () => {
     {
       path: baseUrl.checkout,
       element: Checkout,
-      isPrivate: true,
+      // isPrivate: true,
+      isPrivate: false,
     },
     {
       path: baseUrl.order,
       element: Order,
-      isPrivate: true,
+      isPrivate: false,
     },
     {
       path: baseUrl.login,
@@ -101,7 +102,6 @@ const Routers = () => {
           />
         );
       })}
-      <Route path="/" element={<Navigate to="home" />} />
     </Routes>
   );
 };

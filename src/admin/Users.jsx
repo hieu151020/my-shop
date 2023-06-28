@@ -9,9 +9,11 @@ import { modalActions } from "../redux/slices/modalSlice";
 import useToggleDialog from "../custom-hooks/useToggleDialog";
 import ModalConfirmDelete from "../components/Modal/ModalConfirmDelete";
 import Helmet from "../components/Helmet/Helmet";
+import useSortData from "../custom-hooks/useSortData";
 
 function Users(props) {
-  const { data: usersData, loading } = useGetData("users");
+  const { data, loading } = useGetData("users");
+  const usersData = useSortData(data, "createAt");
   const dispatch = useDispatch();
 
   const { open, toggle, shouldRender } = useToggleDialog();
@@ -28,60 +30,70 @@ function Users(props) {
 
   return (
     <Helmet title={"Dashboard"}>
-    <section>
-      <Container>
-        <Row>
-          <Col lg="12">
-            <h4 className="fw-bold head__title">Users</h4>
-          </Col>
-          <Col lg="12" className="pt-5">
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Image</th>
-                  <th>Tên người dùng</th>
-                  <th>Email</th>
-                  <th>Xóa</th>
-                </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <h5 className="pt-5 fw-bold">Loading data.....</h5>
-                ) : (
-                  usersData?.map((user, index) => (
-                    <tr key={index}>
-                      <td>
-                        <img src={user.photoURL} alt="" />
-                      </td>
-                      <td>{user.displayName}</td>
-                      <td>{user.email}</td>
-                      <td>
-                        <button
-                          className="btn btn-danger"
-                          onClick={() => {
-                            showModalDeleteProduct(user);
-                          }}
-                        >
-                          Xóa
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </Col>
-        </Row>
-      </Container>
-      {shouldRender && (
-        <ModalConfirmDelete
-          toggle={toggle}
-          open={open}
-          content="user"
-          onSubmit={deleteUser}
-        />
-      )}
-    </section>
+      <section>
+        <Container>
+          <Row>
+            <Col lg="12">
+              <h4 className="fw-bold head__title">Users</h4>
+            </Col>
+            <Col lg="12" className="pt-5">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Ngày tạo</th>
+                    <th>Image</th>
+                    <th>Tên người dùng</th>
+                    <th>Email</th>
+                    <th>Role người dùng</th>
+                    <th>Xóa</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {loading ? (
+                    <div className="loading-overlay">
+                      <div className="loading-spinner" />
+                    </div>
+                  ) : (
+                    usersData?.map((user, index) => (
+                      <tr key={index}>
+                        <td>{user.createAt}</td>
+                        <td>
+                          <img src={user.photoURL} alt="" />
+                        </td>
+                        <td>{user.displayName}</td>
+                        <td>{user.email}</td>
+                        <td>
+                          {user.email.startsWith("admin")
+                            ? "ADMIN_ROLE"
+                            : "USER_ROLE"}
+                        </td>
+                        <td>
+                          <button
+                            className="btn-danger-admin"
+                            onClick={() => {
+                              showModalDeleteProduct(user);
+                            }}
+                          >
+                            Xóa
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </Col>
+          </Row>
+        </Container>
+        {shouldRender && (
+          <ModalConfirmDelete
+            toggle={toggle}
+            open={open}
+            content="xóa user"
+            onSubmit={deleteUser}
+          />
+        )}
+      </section>
     </Helmet>
   );
 }

@@ -1,33 +1,27 @@
 import { useState } from "react";
 import { createContext, useContext } from "react";
-import useGetData from "../custom-hooks/useGetData";
-import useAuth from "../custom-hooks/useAuth";
 
 const AuthContext = createContext({
-  isAdmin: false,
-  listProduct: [],
+  isLogged: false,
   login: () => {},
   logout: () => {},
 });
 
 export const useAuthen = () => useContext(AuthContext);
 
-const KEY_LOGIN = "token";
-const MOCK_TOKEN = "abcyz";
+const KEY_LOGIN = "login";
+const MOCK_TOKEN = "login";
 
 const token = window.localStorage.getItem(KEY_LOGIN);
 
 const Authentication = (props) => {
-  const [isAdmin, setIsAdmin] = useState(false);
-  const { currentUser } = useAuth();
+    const [isLogged, setLogged] = useState(!!token);
 
-  let { data: listProduct, loading } = useGetData("products");
-
-  const login = (username) => {
+  const login = (email) => {
     // call API -> attach token to header request -> call API get userInfo -> setUser(user)
-    if (username === "admin") {
-      setIsAdmin(true);
-      console.log("isAdmin");
+    if (email === "admin@gmail.com") {
+      window.localStorage.setItem(KEY_LOGIN, MOCK_TOKEN);
+      setLogged(true);
     }
   };
 
@@ -37,8 +31,7 @@ const Authentication = (props) => {
   };
 
   const values = {
-    listProduct,
-    isAdmin,
+    isLogged,
     login,
     logout,
   };

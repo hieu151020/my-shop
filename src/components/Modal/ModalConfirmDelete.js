@@ -8,7 +8,9 @@ const ModalConfirmDelete = ({ open, toggle, onSubmit, content }) => {
   const confirm = () => {
     const idDelete = getProduct.id || getProduct.uid;
     onSubmit(idDelete);
-    toggle();
+    setTimeout(() => {
+      toggle();
+    }, 500);
   };
 
   const closeBtn = (
@@ -20,7 +22,7 @@ const ModalConfirmDelete = ({ open, toggle, onSubmit, content }) => {
     <Modal isOpen={open} toggle={toggle}>
       <ModalHeader toggle={toggle} close={closeBtn}></ModalHeader>
       <ModalBody toggle={toggle} close={closeBtn}>
-        <h5>Bạn có chắc chắn muốn xóa {content} này không?</h5>
+        <h5>Bạn có chắc chắn muốn {content} này không?</h5>
       </ModalBody>
       <ModalFooter>
         <Button color="primary" onClick={confirm}>

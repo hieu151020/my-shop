@@ -17,7 +17,7 @@ import ModalConfirmDelete from "../components/Modal/ModalConfirmDelete";
 const Cart = () => {
   const { cartItems, totalAmount } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
-
+console.log(cartItems);
   const { open, toggle, shouldRender } = useToggleDialog();
 
   const showModalDeleteProduct = (item) => {
@@ -27,7 +27,7 @@ const Cart = () => {
 
   const deleteProduct = (id) => {
     dispatch(cartActions.deleteItem(id));
-    toast.success("Xóa sản phẩm thành công");
+    toast.success("Delete product successfull");
   };
 
   const HandleIncreaseQuanty = (id) => {
@@ -39,14 +39,14 @@ const Cart = () => {
   };
 
   return (
-    <Helmet title="Cart">
-      <CommonSection title="Shopping Cart" />
+    <Helmet title="Giỏ hàng">
+      <CommonSection title="Giỏ hàng" />
       {totalAmount === 0 ? (
         <h2 className="fs-4 text-center mt-5 mb-5">
-          Bạn chưa thêm gì vào giỏ hàng
+          Oops! Giỏ hàng của bạn chưa có sản phẩm nào
           <Col lg="2" style={{ marginLeft: "41%" }}>
             <button className="buy__btn w-100 mt-3">
-              <Link to="/shop">Mua hàng ngay!!</Link>
+              <Link to="/shop">Mua hàng ngay</Link>
             </button>
           </Col>
         </h2>
@@ -99,7 +99,7 @@ const Cart = () => {
             <ModalConfirmDelete
               open={open}
               toggle={toggle}
-              content="sản phẩm"
+              content="xóa sản phẩm"
               onSubmit={deleteProduct}
             />
           )}

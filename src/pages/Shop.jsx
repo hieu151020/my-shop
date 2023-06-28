@@ -9,96 +9,104 @@ import { Container, Row, Col } from "reactstrap";
 import { useState } from "react";
 import ProductsList from "../components/UI/ProductsList";
 import useGetData from "../custom-hooks/useGetData";
+import { NextButton, PageNumbers, PrevButton } from "../helper/paging";
+
+const priceRange = [
+  {
+    name: "0đ - 2.000.000đ",
+    value: "0-2000",
+  },
+  {
+    name: "2.000.000đ - 6.000.000đ",
+    value: "2000-6000",
+  },
+  {
+    name: "6.000.000đ - 10.000.000đ",
+    value: "6000-10000",
+  },
+  {
+    name: "10.000.000đ - 20.000.000đ",
+    value: "10000-20000",
+  },
+  {
+    name: "Trên 20.000.000đ",
+    value: ">20000",
+  },
+];
+
+const listStrap = [
+  {
+    strapName: 'Dây da',
+    strapValue: 'dayda'
+  },
+  {
+    strapName: 'Dây mềm',
+    strapValue: 'daymem'
+  },
+  {
+    strapName: 'Dây kim loại',
+    strapValue: 'daykimloai'
+  },
+  {
+    strapName: 'Dây nhựa',
+    strapValue: 'daynhua'
+  },
+  {
+    strapName: 'Dây Titanium',
+    strapValue: 'daytitanium'
+  },
+]
 
 const Shop = () => {
   const { data: products, loading } = useGetData("products");
   const { data: manufactureData } = useGetData("listManufacture");
   const [productData, setProductsData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(4);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
   const [searchValue, setSearchValue] = useState("");
-
+  
   useEffect(() => {
     setProductsData(products);
   }, [products]);
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = productData.slice(indexOfFirstItem, indexOfLastItem);
+  
+  // const indexOfLastItem = currentPage * itemsPerPage;
+  // const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  // const currentItems = productData.slice(indexOfFirstItem, indexOfLastItem);
 
   const handlePageClick = (event) => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
     setCurrentPage(Number(event.target.id));
-    // setProductsData(productData.slice((currentPage - 1) * 7, currentPage * 7))
   };
 
   const handlePrevClick = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
     setCurrentPage(currentPage - 1);
   };
 
   const handleNextClick = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
     setCurrentPage(currentPage + 1);
   };
 
   const totalPages = Math.ceil(productData?.length / itemsPerPage);
 
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
-      pageNumbers.push(
-        <li key={i} className={i === currentPage ? "active" : ""}>
-          <a onClick={handlePageClick} id={i}>
-            {i}
-          </a>
-        </li>
-      );
-    }
-    return pageNumbers;
-  };
-
-  const renderPrevButton = () => {
-    return currentPage === 1 ? (
-      <li className="disabled">
-        <span>
-          <i className="ri-arrow-left-s-line"></i>
-        </span>
-      </li>
-    ) : (
-      <li>
-        <a
-          className="d-flex align-items-center justify-content-center"
-          onClick={handlePrevClick}
-        >
-          <i className="ri-arrow-left-s-line"></i>
-        </a>
-      </li>
-    );
-  };
-
-  const renderNextButton = () => {
-    return currentPage === totalPages ? (
-      <li className="disabled">
-        <span>
-          <i className="ri-arrow-right-s-line"></i>
-        </span>
-      </li>
-    ) : (
-      <li>
-        <a
-          className="d-flex align-items-center justify-content-center"
-          onClick={handleNextClick}
-        >
-          <i className="ri-arrow-right-s-line"></i>
-        </a>
-      </li>
-    );
-  };
   // ham phan loai sp
   const handleFilter = (e) => {
     const filterValue = e.target.value;
     if (filterValue === "all") {
       const filteredProducts = products;
       setProductsData(filteredProducts);
-    } else {
+    } 
+    else {
       const dataItem = manufactureData.find(
         (item) => item.manufactureValue === filterValue
       );
@@ -106,12 +114,70 @@ const Shop = () => {
         (product) => product.manufacture === dataItem.manufactureValue
       );
       setProductsData(filteredProducts);
+      setCurrentPage(1);
     }
+    // if(filterValue === "dayda"){
+    //   const filteredProducts = products.filter((item)=>item.strapType === "dayda")
+    //   setProductsData(filteredProducts)
+    // }
+    // if(filterValue === "daymem"){
+    //   const filteredProducts = products.filter((item)=>item.strapType === "daymem")
+    //   setProductsData(filteredProducts)
+    // }
   };
 
-  const handleSort=()=>{
-    
-  }
+  const handleSort = (e) => {
+    const sortValue = e.target.value;
+    switch (sortValue) {
+      case "all":
+        setProductsData(products);
+        break;
+      case "0-2000":
+        setProductsData(
+          products.filter(
+            (item) => Number(item.price) >= 0 && Number(item.price) <= 2000000
+          )
+        );
+        setCurrentPage(1);
+        break;
+      case "2000-6000":
+        setProductsData(
+          products.filter(
+            (item) =>
+              Number(item.price) > 2000000 && Number(item.price) <= 6000000
+          )
+        );
+        setCurrentPage(1);
+        break;
+      case "6000-10000":
+        setProductsData(
+          products.filter(
+            (item) =>
+              Number(item.price) > 6000000 && Number(item.price) <= 10000000
+          )
+        );
+        setCurrentPage(1);
+        break;
+      case "10000-20000":
+        setProductsData(
+          products.filter(
+            (item) =>
+              Number(item.price) > 10000000 && Number(item.price) <= 20000000
+          )
+        );
+        setCurrentPage(1);
+        break;
+      case ">20000":
+        setProductsData(
+          products.filter((item) => Number(item.price) > 20000000)
+        );
+        setCurrentPage(1);
+        break;
+
+      default:
+        break;
+    }
+  };
 
   const handleSearch = () => {
     if (searchValue === "") {
@@ -119,17 +185,17 @@ const Shop = () => {
       setProductsData(filteredProducts);
     } else {
       const searchedProducts = products.filter((item) =>
-        item.productName.toLowerCase().includes(searchValue?.trim().toLowerCase())
+        item.productName
+          .toLowerCase()
+          .includes(searchValue?.trim().toLowerCase())
       );
-      setProductsData(
-        searchedProducts
-      );
+      setProductsData(searchedProducts);
     }
   };
 
   return (
     <Helmet title="Shop">
-      <CommonSection title="Products" />
+      <CommonSection title="Sản phẩm" />
 
       <section>
         <Container>
@@ -137,7 +203,7 @@ const Shop = () => {
             <Col lg="3" md="6">
               <div className="filter__widget">
                 <select onChange={handleFilter}>
-                  <option value="all">Tất cả</option>
+                  <option value="all">Chọn hãng sản xuất</option>
                   {manufactureData.map((item, index) => {
                     return (
                       <option key={index} value={item.manufactureValue}>
@@ -148,15 +214,27 @@ const Shop = () => {
                 </select>
               </div>
             </Col>
+            {/* <Col lg="3" md="6">
+              <div className="filter__widget">
+                <select onChange={handleFilter}>
+                  <option value="all">Chọn loại dây</option>
+                  {listStrap.map((item, index) => {
+                    return (
+                      <option key={index} value={item.strapValue}>
+                        {item.strapName}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+            </Col> */}
             <Col lg="2" md="6" className="text-end">
               <div className="filter__widget">
                 <select onChange={handleSort}>
-                  <option>Khoảng giá</option>
-                  <option value="0-2000000">0đ - 2.000.000đ</option>
-                  <option value="2000-6000">2.000.000đ - 6.000.000đ</option>
-                  <option value="6000-10000">6.000.000đ - 10.000.000đ</option>
-                  <option value="10000-20000">10.000.000đ - 20.000.000đ</option>
-                  <option value="20000-40000">20.000.000đ - 40.000.000đ</option>
+                  <option value='all'>Chọn khoảng giá</option>
+                  {priceRange.map((item, index) => (
+                    <option key={index} value={item.value}>{item.name}</option>
+                  ))}
                 </select>
               </div>
             </Col>
@@ -164,7 +242,7 @@ const Shop = () => {
               <div className="search__box">
                 <input
                   type="text"
-                  placeholder="Search......."
+                  placeholder="Tìm kiếm theo tên sản phẩm"
                   onChange={(e) =>
                     setTimeout(() => setSearchValue(e.target.value), 1000)
                   }
@@ -181,27 +259,28 @@ const Shop = () => {
       <section className="pt-0">
         <Container>
           {loading ? (
-            // <h5>Loading...</h5>
             <div className="loading-overlay">
               <div className="loading-spinner" />
             </div>
           ) : (
             <Row>
               {productData.length === 0 ? (
-                <h1 className="text-center">No product are found!!</h1>
+                <h1 className="text-center">Không có sản phẩm nào phù hợp!!</h1>
               ) : (
                 <>
                   <ProductsList
-                    data={productData !== products ? productData : currentItems}
+                    data={productData }
+                    currentPage={currentPage}
+                    itemsPerPage={itemsPerPage}
                   />
                   <div>
                     <ul
                       id="page-numbers"
                       className="d-flex align-items-center justify-content-center mt-5 page__numbers"
                     >
-                      {renderPrevButton()}
-                      {renderPageNumbers()}
-                      {renderNextButton()}
+                       <PrevButton currentPage={currentPage} handlePrevClick={handlePrevClick}/>
+                  <PageNumbers totalPages={totalPages} currentPage={currentPage} handlePageClick={handlePageClick}/>
+                  <NextButton currentPage={currentPage} totalPages={totalPages} handleNextClick={handleNextClick}/>
                     </ul>
                   </div>
                 </>

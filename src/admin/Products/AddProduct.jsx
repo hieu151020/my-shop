@@ -12,30 +12,47 @@ import InputField from "../../components/Field/InputField";
 import TextAreaField from "../../components/Field/TextAreaField";
 import SelectField from "../../components/Field/SelectField";
 import useGetData from "../../custom-hooks/useGetData";
+import useFomatDate from "../../custom-hooks/useFomatDate";
 
-const listCategory = [
+const listStrap = [
   {
-    name: "Nam",
-    value: "men",
+    name: 'Dây da',
+    value: 'dayda'
   },
   {
-    name: "Nữ",
-    value: "woman",
+    name: 'Dây mềm',
+    value: 'daymem'
   },
   {
-    name: "Cặp đôi",
-    value: "wireless",
+    name: 'Dây kim loại',
+    value: 'daykimloai'
   },
-];
+  {
+    name: 'Dây nhựa',
+    value: 'daynhua'
+  },
+  {
+    name: 'Dây Titanium',
+    value: 'daytitanium'
+  },
+]
 
 function AddProduct(props) {
   const [image, setImage] = useState(null);
-  const { data: manufactureData, loadingManufacture } = useGetData("listManufacture");
+  const { data: manufactureData } = useGetData("listManufacture");
+  const { data: categoryData } = useGetData("listCategory");
 
   const listManufacture = manufactureData.map((item) => {
     return {
       name: item?.manufactureName,
       value: item?.manufactureValue,
+    };
+  });
+
+  const listCategory = categoryData.map((item) => {
+    return {
+      name: item?.categoryName,
+      value: item?.categoryValue,
     };
   });
 
@@ -51,15 +68,16 @@ function AddProduct(props) {
     formikRef.current.setFieldValue("imageFormik", "");
     setImage(null);
   };
-
+  
+  const formattedDate = useFomatDate()
+  
   const addProduct = async (values) => {
     // add product firebase database
-
-    const { productName, shortDesc, description, category,manufacture, price } = values;
+    
+    const { productName, shortDesc, description, category,manufacture,strapType, price } = values;
 
     try {
       const docRef = collection(db, "products");
-      const createAt = new Date().getTime()
       const storageRef = ref(
         storage,
         `productImages/${Date.now() + image.name}`
@@ -68,7 +86,7 @@ function AddProduct(props) {
 
       uploadTask.on(
         () => {
-          toast.error("Images didn't uploaded!!!");
+          toast.error("Images didn't uploaded!!");
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then(async (dowloadURL) => {
@@ -78,8 +96,9 @@ function AddProduct(props) {
               description: description,
               category: category,
               manufacture:manufacture,
+              // strapType:strapType,
               price: price,
-              createAt:createAt,
+              createAt:formattedDate,
               stockNumber:0,
               available:0,
               imgUrl: dowloadURL,
@@ -100,20 +119,22 @@ function AddProduct(props) {
     description: "",
     category: "",
     manufacture:"",
+    // strapType:"",
     price: "",
     imageFormik: "",
   };
 
   const validationSchema = Yup.object().shape({
-    productName: Yup.string().required("Trường này là bắt buộc"),
-    shortDesc: Yup.string().required("Trường này là bắt buộc"),
-    description: Yup.string().required("Trường này là bắt buộc"),
-    category: Yup.string().required("Trường này là bắt buộc"),
-    manufacture: Yup.string().required("Trường này là bắt buộc"),
+    productName: Yup.string().required("Hãy nhập tên sản phẩm"),
+    shortDesc: Yup.string().required("Viết mô tả ngắn"),
+    description: Yup.string().required("Viết mô tả chi tiết"),
+    category: Yup.string().required("Chọn loại sản phẩm"),
+    manufacture: Yup.string().required("Chọn hãng sản xuất"),
+    // strapType: Yup.string().required("Chọn loại dây"),
     price: Yup.number("Trường này phải là số").required(
-      "Trường này là bắt buộc"
+      "Hãy nhập giá sản phẩm"
     ),
-    imageFormik: Yup.string().required("Trường này là bắt buộc"),
+    imageFormik: Yup.string().required("Hãy chọn ảnh cho sản phẩm"),
   });
 
   return (
@@ -183,6 +204,16 @@ function AddProduct(props) {
                         />
                       </FormGroup>
                     </div>
+                    {/* <FormGroup className="form__group w-50">
+                        <Field
+                          name="strapType"
+                          className="w-100 p-2"
+                          component={SelectField}
+                          options={listStrap}
+                          label="Loại dây"
+                          required
+                        />
+                      </FormGroup> */}
                     <div className="d-flex align-items-center justify-content-between gap-5">
                     <FormGroup className="form__group w-50">
                         <Field

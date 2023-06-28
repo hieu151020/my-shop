@@ -14,11 +14,13 @@ import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import InputField from "../components/Field/InputField";
+import useFomatDate from "../custom-hooks/useFomatDate";
 
 const Signup = () => {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  
+  const formattedDate = useFomatDate()
   const navigate = useNavigate();
 
   const signup = async (values) => {
@@ -50,6 +52,7 @@ const Signup = () => {
               displayName: username,
               email,
               photoURL: dowloadURL,
+              createAt:formattedDate,
             });
           });
         }
@@ -90,9 +93,9 @@ const Signup = () => {
         <Container>
           <Row>
             {loading ? (
-              <Col className="text-center">
-                <h6 className="fw-bold">Loading....</h6>
-              </Col>
+              <div className="loading-overlay">
+              <div className="loading-spinner" />
+            </div>
             ) : (
               <Col lg="6" className="m-auto ">
                 <h3 className="fw-bold fs-4 mb-4 text-center">
@@ -131,6 +134,7 @@ const Signup = () => {
                           <Field
                             name="password"
                             component={InputField}
+                            type='password'
                             label="Mật khẩu"
                             labelStyle="white"
                             placeholder="Nhập mật khẩu"

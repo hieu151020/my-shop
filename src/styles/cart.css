@@ -16,3 +16,11 @@ td ,th{
 td{
     vertical-align:middle;
 }
+
+/* .arrow{
+    display: block;
+    width: 5px;
+    height: 5px;
+    background-color: rgba(240,243,244,1);
+    border-radius: 50%;
+} */

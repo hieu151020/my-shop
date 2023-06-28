@@ -1,11 +1,11 @@
 const baseUrl = {
-  home: "/home",
+  home: "/",
   shop: "/shop",
   cart: "/cart",
   product: "shop/:id",
   checkout: "checkout",
   order: "order",
-  login: "login",
+  login: "/login",
   signup: "signup",
   dashboard: "dashboard/main",
   allproducts: "dashboard/all-products",

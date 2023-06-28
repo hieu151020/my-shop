@@ -7,13 +7,7 @@ import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 import { db } from "../../firebase.config";
-import {
-  doc,
-  deleteDoc,
-  collection,
-  onSnapshot,
-  query,
-} from "firebase/firestore";
+import { doc, deleteDoc } from "firebase/firestore";
 
 import { modalActions } from "../../redux/slices/modalSlice";
 import ModalConfirmDelete from "../../components/Modal/ModalConfirmDelete";
@@ -21,17 +15,22 @@ import useToggleDialog from "../../custom-hooks/useToggleDialog";
 import ModalEditProduct from "./Modal/ModalEditProduct";
 import ModalManageManufacture from "./Modal/ModalManageManufacture";
 import useGetData from "../../custom-hooks/useGetData";
+import ProductTable from "./Component/ProductTable";
+import { NextButton, PageNumbers, PrevButton } from "../../helper/paging";
 
 function AllProduct(props) {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(7);
-  const [loading, setLoading] = useState(true);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  // const [loading, setLoading] = useState(true);
   const [isEdit, setEdit] = useState(false);
   const [isManufacture, setManufacture] = useState(false);
+  const { data: products, loading } = useGetData("products");
   const { data: categoryData, loadingCategory } = useGetData("listCategory");
   const { data: manufactureData, loadingManufacture } =
     useGetData("listManufacture");
+
+  const [selectedItem, setSelectedItem] = useState(null);
 
   const dispatch = useDispatch();
 
@@ -80,227 +79,186 @@ function AllProduct(props) {
   };
 
   useEffect(() => {
-    const q = query(collection(db, "products"));
+    // const q = query(collection(db, "products"));
 
-    const getData = onSnapshot(q, (snapshot) => {
-      const newData = snapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }));
-      setData(newData);
-      setLoading(false);
-    });
+    // const getData = onSnapshot(q, (snapshot) => {
+    //   const newData = snapshot.docs.map((doc) => ({
+    //     ...doc.data(),
+    //     id: doc.id,
+    //   }));
+    setData(products);
+    // setLoading(false);
+    // });
 
-    return () => getData();
-  }, [currentPage]);
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+    // return () => getData();
+  }, [products]);
 
   const handlePageClick = (event) => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
     setCurrentPage(Number(event.target.id));
   };
 
   const handlePrevClick = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
     setCurrentPage(currentPage - 1);
   };
 
   const handleNextClick = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
     setCurrentPage(currentPage + 1);
   };
 
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
-  const renderPageNumbers = () => {
-    const pageNumbers = [];
-    for (let i = 1; i <= totalPages; i++) {
-      pageNumbers.push(
-        <li key={i} className={i === currentPage ? "active" : ""}>
-          <a onClick={handlePageClick} id={i}>
-            {i}
-          </a>
-        </li>
+  const handleFilter = (e) => {
+    const filterValue = e.target.getAttribute("value");
+    setSelectedItem(filterValue);
+    if (filterValue === "all") {
+      const filteredProducts = products;
+      setData(filteredProducts);
+    } else {
+      const dataItem = manufactureData?.find(
+        (item) => item.manufactureValue === filterValue
       );
+      const filteredProducts = products?.filter(
+        (product) => product.manufacture === dataItem.manufactureValue
+      );
+      setData(filteredProducts);
+      setCurrentPage(1);
     }
-    return pageNumbers;
-  };
-
-  const renderPrevButton = () => {
-    return currentPage === 1 ? (
-      <li className="disabled">
-        <span>
-          <i className="ri-arrow-left-s-line"></i>
-        </span>
-      </li>
-    ) : (
-      <li>
-        <a
-          className="d-flex align-items-center justify-content-center"
-          onClick={handlePrevClick}
-        >
-          <i className="ri-arrow-left-s-line"></i>
-        </a>
-      </li>
-    );
-  };
-
-  const renderNextButton = () => {
-    return currentPage === totalPages ? (
-      <li className="disabled">
-        <span>
-          <i className="ri-arrow-right-s-line"></i>
-        </span>
-      </li>
-    ) : (
-      <li>
-        <a
-          className="d-flex align-items-center justify-content-center"
-          onClick={handleNextClick}
-        >
-          <i className="ri-arrow-right-s-line"></i>
-        </a>
-      </li>
-    );
   };
 
   return (
-    <section>
-      <Row>
-        <div className="left-nav">
-          <div>
-            <h3 className="pb-3 mb-4 mt-3 title__left-nav">
-              Danh mục sản phẩm
-            </h3>
-            {/* <ul className="filter__product__list">
-              <li className="mb-2 ">Nam</li>
-              <li className="mb-2">Nữ</li>
-              <li className="mb-2">Cặp đôi</li>
-            </ul> */}
-            <ul className="filter__product__list">
-              {manufactureData.map((item, index) => (
-                <li key={index} className="mb-2">
-                  {item.manufactureName}
-                </li>
-              ))}
-            </ul>
-          </div>
+    <section style={{padding:'0'}}>
+      {loading ? (
+        <div className="loading-overlay">
+          <div className="loading-spinner" />
         </div>
-        <Col lg="9">
-          <Link to="/dashboard/all-products/add-products">
-            <button
-              className="btn btn-primary mb-5"
-              style={{ marginRight: "10px" }}
-            >
-              Thêm sản phẩm mới
-            </button>
-          </Link>
-          <button
-            className="btn btn-primary mb-5 "
-            style={{ marginRight: "10px" }}
-            onClick={handleManufacture}
-          >
-            Danh sách hãng sản xuất
-          </button>
-          <button className="btn btn-primary mb-5" onClick={handleCategory}>
-            Danh sách loại sản phẩm
-          </button>
-          <table className="table">
-            <thead>
-              <tr>
-                <th>STT</th>
-                <th>Ảnh</th>
-                <th>Tên sản phẩm</th>
-                <th>Loại sản phẩm</th>
-                <th>Hãng sản xuất</th>
-                <th>Giá</th>
-                <th>Số lượng trong kho</th>
-                <th>Nhập</th>
-                <th>Sửa</th>
-                <th>Xóa</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loading ? (
-                <h4 className="py-5 text-center fw-bold">Loading data....</h4>
-              ) : (
-                currentItems.map((item, index) => {
-                  let price = item.price;
-                  price = +price;
-                  return (
-                    <>
-                      <tr key={item.id}>
-                        <td>{index + 1}</td>
-                        <td>
-                          <img src={item.imgUrl} alt="" />
-                        </td>
-                        <td>{item.productName}</td>
-                        <td>{item.category}</td>
-                        <td>{item.manufacture}</td>
-                        <td>{price.toLocaleString("vi-VN")} đ</td>
-                        <td>{item.stockNumber}</td>
-                        <td
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="bottom"
-                          title="Nhập hàng"
-                        >
-                          <button
-                            className="btn btn-primary"
-                            onClick={() => handleImportProduct(item)}
-                          >
-                            <i class="ri-download-line"></i>
-                          </button>
-                        </td>
-                        <td
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="bottom"
-                          title="Sửa"
-                        >
-                          <button
-                            className="btn btn-primary"
-                            onClick={() => handleEditProduct(item)}
-                          >
-                            <i class="ri-edit-line"></i>
-                          </button>
-                        </td>
-                        <td
-                          data-bs-toggle="tooltip"
-                          data-bs-placement="bottom"
-                          title="Xóa"
-                        >
-                          <button
-                            className="btn btn-danger"
-                            onClick={() => {
-                              showModalDeleteProduct(item);
-                            }}
-                          >
-                            <i class="ri-delete-bin-line"></i>
-                          </button>
-                        </td>
-                      </tr>
-                    </>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-          <div>
-            <ul
-              id="page-numbers"
-              className="d-flex align-items-center justify-content-center mt-5 page__numbers"
-            >
-              {renderPrevButton()}
-              {renderPageNumbers()}
-              {renderNextButton()}
-            </ul>
+      ) : (
+        <Row>
+          <div className="left-nav">
+            <div>
+              <h3 className="pb-3 mb-4 mt-3 title__left-nav">
+                Quản lí sản phẩm
+              </h3>
+              <ul className="filter__product__list">
+                <li
+                  value="all"
+                  className={`mb-2 ${selectedItem === null ? "active" : ""}`}
+                  onClick={handleFilter}
+                >
+                  All
+                </li>
+                {manufactureData.map((item, index) => (
+                  <li
+                    key={index}
+                    className={`mb-2 ${
+                      selectedItem === item.manufactureValue ? "active" : ""
+                    }`}
+                    value={item.manufactureValue}
+                    onClick={handleFilter}
+                  >
+                    {item.manufactureName}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-        </Col>
-      </Row>
+          <Col lg="10" className="mt-3">
+            <Link to="/dashboard/all-products/add-products">
+              <button
+                className=" mb-5 btn-primary-admin"
+                style={{ marginRight: "10px" }}
+              >
+                Thêm mới
+              </button>
+            </Link>
+            <button
+              className=" mb-5 btn-primary-admin"
+              style={{ marginRight: "10px" }}
+              onClick={handleManufacture}
+            >
+              Hãng sản xuất
+            </button>
+            <button
+              className=" mb-5 btn-primary-admin"
+              onClick={handleCategory}
+            >
+              Loại sản phẩm
+            </button>
+            {data.length === 0 ? (
+              <Col lg="6">
+                <h1 className="text-center">Không có sản phẩm nào phù hợp!!</h1>
+              </Col>
+            ) : (
+              <>
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>STT</th>
+                      <th>Ngày tạo</th>
+                      <th>Ảnh</th>
+                      <th>Tên sản phẩm</th>
+                      <th>Loại sản phẩm</th>
+                      <th>Hãng sản xuất</th>
+                      <th>Giá</th>
+                      <th>Số lượng trong kho</th>
+                      <th>Nhập</th>
+                      <th>Sửa</th>
+                      <th>Xóa</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ProductTable
+                      data={data}
+                      handleImportProduct={handleImportProduct}
+                      handleEditProduct={handleEditProduct}
+                      showModalDeleteProduct={showModalDeleteProduct}
+                      currentPage={currentPage}
+                      itemsPerPage={itemsPerPage}
+                    />
+                  </tbody>
+                </table>
+                <div>
+                  <ul
+                    id="page-numbers"
+                    className="d-flex align-items-center justify-content-center mt-5 page__numbers"
+                  >
+                    <PrevButton
+                      currentPage={currentPage}
+                      handlePrevClick={handlePrevClick}
+                    />
+                    <PageNumbers
+                      totalPages={totalPages}
+                      currentPage={currentPage}
+                      handlePageClick={handlePageClick}
+                    />
+                    <NextButton
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      handleNextClick={handleNextClick}
+                    />
+                  </ul>
+                </div>
+              </>
+            )}
+          </Col>
+        </Row>
+      )}
       {shouldRender && (
         <ModalConfirmDelete
           toggle={toggle}
           open={open}
-          content="sản phẩm"
+          content="xóa sản phẩm"
           onSubmit={deleteProduct}
         />
       )}

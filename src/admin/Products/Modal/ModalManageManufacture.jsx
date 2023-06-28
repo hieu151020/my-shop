@@ -17,7 +17,6 @@ import {
   collection,
   deleteDoc,
   doc,
-  orderBy,
 } from "firebase/firestore";
 import { db } from "../../../firebase.config";
 import { toast } from "react-toastify";
@@ -25,6 +24,8 @@ import useToggleDialog from "../../../custom-hooks/useToggleDialog";
 import ModalConfirmDelete from "../../../components/Modal/ModalConfirmDelete";
 import { modalActions } from "../../../redux/slices/modalSlice";
 import { useDispatch } from "react-redux";
+import useFomatDate from "../../../custom-hooks/useFomatDate";
+import ModalEditManufacture from "./ModalEditManufacture";
 
 function ModalManageManufacture({
   open,
@@ -34,6 +35,11 @@ function ModalManageManufacture({
   isManufacture,
 }) {
   const [listData, setListData] = useState([]);
+  const {
+    open: openEdit,
+    toggle: toggleEdit,
+    shouldRender: shouldRenderEdit,
+  } = useToggleDialog();
   const {
     open: openDelete,
     toggle: toggleDelete,
@@ -59,11 +65,11 @@ function ModalManageManufacture({
     }
     toast.success("Delete success!!");
   };
+  
+  const formattedDate = useFomatDate()
 
   const addManufacture = (values) => {
     let dataValue = values.dataName;
-    console.log(dataValue);
-    const createAt = new Date().getTime();
     dataValue = dataValue.replace(/\s/g, "").toLowerCase();
     try {
       if (isManufacture) {
@@ -72,7 +78,7 @@ function ModalManageManufacture({
         addDoc(docRef, {
           manufactureName: values.dataName,
           manufactureValue: dataValue,
-          createAt: createAt,
+          createAt: formattedDate,
         });
       } else {
         const docRef = collection(db, "listCategory");
@@ -80,22 +86,28 @@ function ModalManageManufacture({
         addDoc(docRef, {
           categoryName: values.dataName,
           categoryValue: dataValue,
-          createAt: createAt,
+          createAt: formattedDate,
         });
       }
       formikRef.current.setFieldValue("dataName", "");
       setListData(...listData, { values });
-      toast.success("Add manufacture successful");
+      toast.success("Add successful");
     } catch (error) {
       toast.error(error);
     }
   };
+
+  const handleEdit=(item)=>{
+toggleEdit()
+dispatch(modalActions.getProduct(item));
+  }
 
   const closeBtn = (
     <Button color="secondary" className="btn__close" onClick={toggle}>
       <i className="ri-close-line"></i>
     </Button>
   );
+  
   return (
     <section>
       <Modal
@@ -127,6 +139,7 @@ function ModalManageManufacture({
                           <Field
                             name="dataName"
                             component={InputField}
+                            className='input-default'
                             label={
                               isManufacture
                                 ? "Tên hãng sản xuất"
@@ -137,10 +150,9 @@ function ModalManageManufacture({
                                 ? "Nhập tên hãng sản xuất"
                                 : "Nhập tên loại sản phẩm"
                             }
-                            required
                           />
                           <button
-                            className="btn btn-danger mt-2"
+                            className="btn-primary-admin mt-2"
                             style={{ marginLeft: "20px" }}
                             type="submit"
                           >
@@ -156,6 +168,7 @@ function ModalManageManufacture({
                     <thead>
                       <tr>
                         <th>STT</th>
+                        <th>Ngày tạo</th>
                         {isManufacture ? (
                           <th>Tên hãng sản phẩm</th>
                         ) : (
@@ -176,6 +189,7 @@ function ModalManageManufacture({
                             <>
                               <tr key={item.id}>
                                 <td>{index + 1}</td>
+                                <td>{item.createAt}</td>
                                 {isManufacture ? (
                                   <td>{item.manufactureName}</td>
                                 ) : (
@@ -183,15 +197,15 @@ function ModalManageManufacture({
                                 )}
                                 <td>
                                   <button
-                                    className="btn btn-primary"
-                                    // onClick={() => handleEditProduct(item)}
+                                    className="btn-primary-admin"
+                                    onClick={() => handleEdit(item)}
                                   >
                                     Sửa
                                   </button>
                                 </td>
                                 <td>
                                   <button
-                                    className="btn btn-danger"
+                                    className="btn-danger-admin"
                                     onClick={() => {
                                       showModalDeleteProduct(item);
                                     }}
@@ -221,8 +235,16 @@ function ModalManageManufacture({
         <ModalConfirmDelete
           toggle={toggleDelete}
           open={openDelete}
-          content="hãng sản xuất"
+          content={isManufacture?"xóa hãng sản xuất":"xóa loại sản phẩm"}
           onSubmit={deleteProduct}
+        />
+      )}
+      {shouldRenderEdit && (
+        <ModalEditManufacture
+          toggle={toggleEdit}
+          open={openEdit}
+          isManufacture={isManufacture}
+          data={listData}
         />
       )}
     </section>

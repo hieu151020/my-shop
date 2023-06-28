@@ -1,25 +1,25 @@
 const serviceData = [
   {
-    icon: "ri-truck-line",
-    title: "Free Shipping",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Casio_logo.svg/2560px-Casio_logo.svg.png",
+    title: "Casio",
     subtitle: "Lorem ipsum dolor sit amet.",
     bg: "#fdefe6",
   },
   {
-    icon: "ri-refresh-line",
-    title: "Easy Returns",
+    logo: "https://cdn.shopify.com/s/files/1/0280/6490/7358/files/Orient_New_logo.png?v=1614302151",
+    title: "Rolex",
     subtitle: "Lorem ipsum dolor sit amet.",
     bg: "#ceebe9",
   },
   {
-    icon: "ri-secure-payment-line",
-    title: "Secure Payment",
+    logo: "https://1000logos.net/wp-content/uploads/2020/09/Citizen-Logo.png",
+    title: "Citizen",
     subtitle: "Lorem ipsum dolor sit amet.",
     bg: "#e2f2b2",
   },
   {
-    icon: "ri-exchange-dollar-line",
-    title: " Back Guarantee",
+    logo: "https://www.logo.wine/a/logo/Apple_Inc./Apple_Inc.-Logo.wine.svg",
+    title: "Apple",
     subtitle: "Lorem ipsum dolor sit amet.",
     bg: "#d6e5fb",
   },

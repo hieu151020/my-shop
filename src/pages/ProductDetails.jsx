@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import "../styles/product-details.css";
 import { Container, Row, Col } from "reactstrap";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import CommonSection from "../components/UI/CommonSection";
 import Helmet from "../components/Helmet/Helmet";
 import { motion } from "framer-motion";
@@ -17,9 +17,9 @@ const ProductDetails = () => {
   const reviewMsg = useRef("");
   const dispatch = useDispatch();
   const product = useSelector((state) => state.modal.getProduct);
-
+console.log(product);
   const [expanded, setExpanded] = useState(false);
-
+const navigate = useNavigate()
   const toggleExpanded = () => {
     setExpanded(!expanded);
   };
@@ -37,10 +37,11 @@ const ProductDetails = () => {
     // reviews,
     description,
     shortDesc,
+    manufacture,
     category,
   } = product;
 
-  const relatedProducts = products.filter((item) => item.category === category);
+  const relatedProducts = products.filter((item) => item.manufacture === manufacture);
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -60,7 +61,7 @@ const ProductDetails = () => {
     dispatch(
       cartActions.addItem({
         id,
-        image: imgUrl,
+        imgUrl: imgUrl,
         productName,
         price,
       })
@@ -81,19 +82,19 @@ const ProductDetails = () => {
         <Container>
           {/* <Row>
             <Col>
-              <span className="btn__back">
+              <span className="btn__back" onClick={()=>navigate("/shop")}>
                 <i className="ri-arrow-drop-left-line"></i>
               </span>
             </Col>
           </Row> */}
           <Row>
-            <Col lg="6" className="product__img">
+            <Col lg="6" className="product__img__detail">
               <img src={imgUrl} alt="" />
             </Col>
-            <Col lg="6">
+            <Col lg="6" style={{paddingLeft:'30px'}}>
               <div className="product__details">
                 <h2>{productName}</h2>
-                <div className="product__rating d-flex align-items-center gap-5 mb-3">
+                {/* <div className="product__rating d-flex align-items-center gap-5 mb-3">
                   <div>
                     <span>
                       <i className="ri-star-s-fill" />
@@ -110,16 +111,19 @@ const ProductDetails = () => {
                     <span>
                       <i className="ri-star-half-s-fill" />
                     </span>
-                  </div>
+                  </div> */}
                   <p>{/* (<span>{avgRating}</span> rating) */}</p>
-                </div>
+                {/* </div> */}
 
                 <div className="d-flex align-items-center gap-5">
                   <span className="product__price">
-                    {Number(price).toLocaleString("vi-VN")}đ
+                    Giá: {Number(price).toLocaleString("vi-VN")}đ
                   </span>
-                  <span>Category: {category?.toUpperCase()}</span>
                 </div>
+                <div className="d-flex align-items-center gap-5 mt-3">
+                  <span>Hãng: {manufacture?.toUpperCase()}</span>
+                  <span>Giới tính: {category?.toUpperCase()}</span>
+</div>
                 <p className="mt-3">{shortDesc}</p>
                 {product.available > 0 ? (
                 <motion.button
@@ -150,12 +154,12 @@ const ProductDetails = () => {
                 >
                   Mô tả sản phẩm
                 </h5>
-                <h5
+                {/* <h5
                   className={`${tab === "rev" ? "active__tab" : ""}`}
                   onClick={() => setTab("rev")}
                 >
                   Review
-                </h5>
+                </h5> */}
               </div>
 
               {tab === "desc" ? (
@@ -163,7 +167,7 @@ const ProductDetails = () => {
                   {expanded ? (
                     <p>{description}</p>
                   ) : (
-                    <p>{description?.slice(0, 500)}</p>
+                    <p>{description?.slice(0, 550)}</p>
                   )}
                     {description?.length > 500 &&  (expanded ? <button className="btn__colapse" onClick={toggleExpanded}>Thu gọn</button> : <button className="btn__expand" onClick={toggleExpanded}>Xem thêm</button>)}
                 </div>
@@ -181,7 +185,7 @@ const ProductDetails = () => {
                     </ul>
 
                     <div className="review__form">
-                      <h4>Review Product for other</h4>
+                      <h4>Đánh giá</h4>
                       <form action="" onSubmit={submitHandler}>
                         <div className="form__group">
                           <input
@@ -249,10 +253,10 @@ const ProductDetails = () => {
             </Col>
 
             <Col lg="12">
-              <h2 className="related__title ">You might also like</h2>
+              <h2 className="related__title ">Có thể bạn cũng thích</h2>
             </Col>
 
-            <ProductsList data={relatedProducts} />
+            <ProductsList data={relatedProducts.slice(0,8)} />
           </Row>
         </Container>
       </section>

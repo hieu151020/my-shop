@@ -26,6 +26,8 @@ const ModalEditProduct = ({ open, toggle, manufactureData,categoryData, isEdit }
   const item = useSelector((state) => state.modal.getProduct);
   const formikRef = useRef();
 
+  console.log(item);
+
   const listManufacture = manufactureData.map((item) => {
     return {
       name: item?.manufactureName,
@@ -33,7 +35,7 @@ const ModalEditProduct = ({ open, toggle, manufactureData,categoryData, isEdit }
     };
   });
 
-  const listCategory = manufactureData.map((item) => {
+  const listCategory = categoryData.map((item) => {
     return {
       name: item?.categoryName,
       value: item?.categoryValue,
@@ -61,7 +63,7 @@ const ModalEditProduct = ({ open, toggle, manufactureData,categoryData, isEdit }
         const uploadTask = uploadBytesResumable(storageRef, image);
         uploadTask.on(
           () => {
-            toast.error("Images didn't uploaded!!!");
+            toast.error("Images didn't uploaded!!");
           },
           () => {
             getDownloadURL(uploadTask.snapshot.ref).then(async (dowloadURL) => {
@@ -126,6 +128,7 @@ const ModalEditProduct = ({ open, toggle, manufactureData,categoryData, isEdit }
     description: item?.description,
     category: item?.category,
     manufacture: item?.manufacture,
+    strapType:item?.strapType,
     price: item?.price,
     imageFormik: "",
   };
@@ -245,9 +248,9 @@ const ModalEditProduct = ({ open, toggle, manufactureData,categoryData, isEdit }
                           <button className="buy__btn" type="submit">
                             Lưu
                           </button>
-                          <button className="buy__btn" onClick={toggle}>
+                          {/* <button className="buy__btn" onClick={toggle}>
                             Đóng
-                          </button>
+                          </button> */}
                         </Form>
                       );
                     }}

@@ -12,10 +12,11 @@ import { signOut } from "firebase/auth";
 import { auth } from "../../firebase.config";
 import { toast } from "react-toastify";
 import useGetData from "../../custom-hooks/useGetData";
+import { useAuthen } from "../../userContext/AuthenticationProvider";
 
 const nav_links = [
   {
-    path: "home",
+    path: "/",
     display: "Trang chủ",
   },
   {
@@ -37,6 +38,7 @@ const Header = () => {
   const location = useLocation();
   const { currentUser } = useAuth();
   const { data: orderData } = useGetData("orders");
+  const { logout } = useAuthen();
 
   const isAdmin =
     currentUser?.displayName === "admin" &&
@@ -65,10 +67,11 @@ const Header = () => {
     return filteredOrders;
   }, [orderData, currentUser]);
 
-  const logout = () => {
-    signOut(auth)
+  const handleLogout = async() => {
+    await signOut(auth)
       .then(() => {
-        toast.success("You are log out");
+        // toast.success("You are log out");
+        logout();
       })
       .catch((err) => {
         toast.error(err.message);
@@ -100,7 +103,7 @@ const Header = () => {
             <div className="logo">
               <img src={logo} alt="logo" />
               <div>
-                {location.pathname === "/home" ? (
+                {location.pathname === "/" ? (
                   <h1>My Shop</h1>
                 ) : (
                   <Link to={"/"}>
@@ -155,13 +158,21 @@ const Header = () => {
                 </Link>
                 <span className="badge">{totalQuantity}</span>
               </span>
-              <div className="profile">
+              <div
+                className="profile"
+                data-bs-toggle="tooltip"
+                data-bs-placement="bottom"
+                title="Tài khoản"
+              >
                 <motion.img
                   whileTap={{ scale: 1.2 }}
                   src={currentUser ? currentUser.photoURL : userIcon}
                   alt=""
                   onClick={toggleProfileActions}
                 />
+                <span style={{ marginLeft: "5px" }}>
+                  {currentUser?.displayName}
+                </span>
                 <div
                   className="profile_actions"
                   ref={profileActionRef}
@@ -171,21 +182,52 @@ const Header = () => {
                     <>
                       {!!isAdmin ? (
                         <div className="d-flex align-items-center justify-content-center flex-column ">
-                          <span onClick={logout}>Đăng xuất</span>
+                          <span
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="bottom"
+                            title="Đăng xuất"
+                            onClick={handleLogout}
+                          >
+                            Đăng xuất
+                          </span>
                           <span onClick={toggleProfileActions}>
-                            <Link to="/dashboard/main">Dashboard</Link>
+                            <Link
+                              data-bs-toggle="tooltip"
+                              data-bs-placement="bottom"
+                              title="Dashboard"
+                              to="/dashboard/main"
+                            >
+                              Dashboard
+                            </Link>
                           </span>
                         </div>
                       ) : (
-                        <span onClick={logout}>Đăng xuất</span>
+                        <span
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="bottom"
+                          title="Đăng xuất"
+                          onClick={handleLogout}
+                        >
+                          Đăng xuất
+                        </span>
                       )}
                     </>
                   ) : (
                     <div className="d-flex align-items-center justify-content-center flex-column">
-                      <span onClick={toggleProfileActions}>
+                      <span
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="bottom"
+                        title="Đăng kí"
+                        onClick={toggleProfileActions}
+                      >
                         <Link to="/signup">Đăng kí</Link>
                       </span>
-                      <span onClick={toggleProfileActions}>
+                      <span
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="bottom"
+                        title="Đăng nhập"
+                        onClick={toggleProfileActions}
+                      >
                         <Link to="/login">Đăng nhập</Link>
                       </span>
                     </div>

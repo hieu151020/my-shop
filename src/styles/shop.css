@@ -82,4 +82,10 @@
         padding: 7px 20px;
         font-size: 0.9rem;
     }
+    .search__box{
+        width: 50%;
+    }
+    .search__box__col {
+    margin-left: 0px;
+}
 }

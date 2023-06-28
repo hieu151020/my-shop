@@ -1,41 +1,5 @@
 import React from "react";
 
-// const CustomTextArea = styled(TextareaAutosize)(({ theme }) => {
-//   return {
-//     borderRadius: theme.custom.borderRadius.input_8,
-//     borderColor: theme.custom.colors.grayborder,
-//     padding: theme.custom.padding.paddingInput,
-//     maxWidth: "100%",
-//     minWidth: "100%",
-//     "&:focus": {
-//       outline: "none",
-//       border: `2px solid ${theme.custom.colors.lightblue}`,
-//     },
-//   };
-// });
-
-// const useStyles = makeStyles((theme) => {
-//   return {
-//     rootInput: {
-//       display: "flex",
-//       flexDirection: "column",
-
-//       "& > label": {
-//         marginBottom: 8,
-//         fontWeight: 600,
-//       },
-//       "& > span": {
-//         color: "red",
-//         fontSize: "0.75rem",
-//         margin: "3px 14px 0",
-//       },
-//     },
-//     labelHeaderColorPrimary: {
-//       color: `${theme.custom.colors.darkblue} !important`,
-//     },
-//   };
-// });
-
 const TextAreaField = (props) => {
   //! State
 

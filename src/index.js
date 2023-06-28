@@ -9,12 +9,12 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Authentication from "./providers/Provider";
+import AuthenticationProvider from "./userContext/AuthenticationProvider";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <Authentication>
+  // <React.StrictMode>
+    <AuthenticationProvider>
       <BrowserRouter>
         <Provider store={store}>
           <ToastContainer
@@ -27,6 +27,6 @@ root.render(
           <App />
         </Provider>
       </BrowserRouter>
-    </Authentication>
-  </React.StrictMode>
+    </AuthenticationProvider>
+  // </React.StrictMode>
 );
